@@ -8,7 +8,7 @@ SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
-# Tagging logs
+# logging tags
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 

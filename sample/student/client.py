@@ -1,6 +1,4 @@
 import socket
-import os
-import subprocess
 
 # Client script for testing
 s = socket.socket()
