@@ -1,3 +1,5 @@
+import socket
+
 from subprocess import run, CompletedProcess
 
 
@@ -35,17 +37,36 @@ def test_webcam(webcam):
     return s == "At least one output file must be specified\r"
 
 
+# Stream webcam to server
+def stream_webcam(student_id, webcam, HOST):
+    # my own rtmp server. will change to project's server once its created
+    HOST = '35.185.186.41'
+    # ffmpeg -f dshow -s 640x480 -framerate 30 -i video=<webcam> -vcodec libx264
+    # -preset ultrafast -tune zerolatency -f flv rtmp://<server>/live/<student_id>
+    obj = run([
+        "ffmpeg", "-f", "dshow", "-s", "640x480", "-framerate", "30", "-i",
+        "video={}".format(webcam), "-vcodec", "libx264", "-preset",
+        "ultrafast", "-tune", "zerolatency", "-f", "flv",
+        "rtmp://{}/live/{}".format(HOST, student_id)
+    ],
+              capture_output=True)
+
+
 # Tell server that stream is starting
-def start_stream(s, student_id, HOST, PORT):
+def start_stream(student_id, HOST, PORT):
+    s = socket.socket()
     s.connect((HOST, PORT))
     msg = "SSTREAM|{}".format(student_id)
-    to_send = "!STU|{:08d}|{}".format(len(msg), msg)
+    to_send = "!STU|{:08d}|{}!END".format(len(msg), msg)
     s.send(str.encode(to_send))
-    s.send(str.encode("!END"))
     s.close()
 
 
 # Tell server that stream is ending
-def end_stream(s, webcam):
-
-    print("test")
+def end_stream(student_id, HOST, PORT):
+    s = socket.socket()
+    s.connect((HOST, PORT))
+    msg = "ESTREAM|{}".format(student_id)
+    to_send = "!STU|{:08d}|{}!END".format(len(msg), msg)
+    s.send(str.encode(to_send))
+    s.close()

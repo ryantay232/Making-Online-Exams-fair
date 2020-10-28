@@ -11,7 +11,12 @@ def handle_command(addr, msg):
     print("{} Instructor from {}: {}".format(INFO_TAG, addr, msg))
     msg_list = msg.split('|')
     comd = msg_list[0]
-    data = msg_list[1]
+    # data = msg_list[1]
     res = None
+
+    if comd == "GETSTREAM":
+        res = ComdResult("GETSTREAM")
+    else:
+        print("{} Invalid command".format(ERROR_TAG))
 
     return res

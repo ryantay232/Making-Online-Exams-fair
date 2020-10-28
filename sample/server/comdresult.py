@@ -3,6 +3,6 @@
 class ComdResult:
     # (if you need other variables, just add into the constructor
     # and give it a default variable)
-    def __init__(self, comd="", res=""):
+    def __init__(self, comd=None, res=None):
         self.comd = comd
         self.res = res

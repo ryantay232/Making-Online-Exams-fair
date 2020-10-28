@@ -2,14 +2,15 @@ import socket
 
 from multiprocessing import Process
 
-from sample.student.webcam.webcam import get_webcam_list, test_webcam, start_stream
+from sample.student.webcam.webcam import get_webcam_list, test_webcam, stream_webcam, start_stream
 
 # Client info
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
 
 # Server info
-HOST = "192.168.2.100" # to change to server ip address
+HOST = "192.168.2.100"  # to change to server ip address
 PORT = 5050
+FORMAT = 'utf-8'
 
 # logging tags
 INFO_TAG = '[INFO]'
@@ -28,10 +29,8 @@ def port_flagging(n):
         print("func2 {}".format(i))
 
 
-def webcam_streaming(n):
-    # replace with your own code
-    for i in range(n):
-        print("func3 {}".format(i))
+def webcam_streaming(student_id, webcam):
+    stream_webcam(student_id, webcam, HOST)
 
 
 def run_in_parallel(funcs, args):
@@ -49,7 +48,7 @@ def main():
     student_id = input("Student id: ")
 
     # authenticate student (are we still doing account and password?)
-    sock = socket.socket()
+    # sock = socket.socket()
     # sock.conect((HOST, PORT))
 
     # choose webcam
@@ -71,14 +70,17 @@ def main():
         if not isWorking:
             webcam = None
 
-    start_stream(sock, student_id, HOST, PORT)
+    start_stream(student_id, HOST, PORT)
 
     # list of functions and args tuples
     # (replace args with your own args, numbers just for testing)
-    #funcs = [quiz_platform, port_flagging, webcam_streaming]
-    #args = [(70, ), (100, ), (80, )]
+    funcs = [quiz_platform, port_flagging, webcam_streaming]
+    args = [(70, ), (100, ), (
+        student_id,
+        webcam,
+    )]
 
-    #run_in_parallel(funcs, args)
+    run_in_parallel(funcs, args)
 
 
 if __name__ == "__main__":

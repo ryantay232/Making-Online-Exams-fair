@@ -1,3 +1,6 @@
+import socket
+import json
+
 # Temporary menu, will change if needed
 menu = """
 1. Upload quiz
@@ -8,9 +11,36 @@ menu = """
 6. Exit
 """
 
+# Client info
+CLIENT_IP = socket.gethostbyname(socket.gethostname())
+
+# Server info
+HOST = "192.168.2.100"  # to change to server ip address
+PORT = 5050
+FORMAT = 'utf-8'
+
 # logging tags
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
+
+
+# Get list of student streams (will move to own file)
+def get_streams():
+    s = socket.socket()
+    s.connect((HOST, PORT))
+    msg = "GETSTREAM"
+    to_send = "!INS|{:08d}|{}".format(len(msg), msg)
+    s.send(str.encode(to_send))
+    reply = s.recv(4096).decode(FORMAT)
+    s.send(str.encode("!END"))
+    s.close()
+    streams_dict = json.loads(reply)
+    if len(streams_dict) == 0:
+        print("{} No streams running now.".format(INFO_TAG))
+    else:
+        print("Student Id   Stream Link")
+        for key in list(streams_dict.keys()):
+            print("{: <13}{}".format(key, streams_dict[key]))
 
 
 def main():
@@ -32,8 +62,7 @@ def main():
             # replace with your own code
             print("Check flagged students")
         elif choice == 4:
-            # replace with your own code
-            print("Print list of students' streams")
+            get_streams()
         elif choice == 5:
             # replace with your own code
             print("Download student's stream")
