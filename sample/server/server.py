@@ -1,6 +1,10 @@
 import socket
 import threading
 
+import sample.server.comdresult as ComdResult
+import sample.server.student_comd.student_comd as student_comd
+import sample.server.instructor_comd.instructor_comd as instructor_comd
+
 # Server info
 HEADER = 4
 PORT = 5050
@@ -21,6 +25,20 @@ INST_MSG = "!INS"
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
+# Global vars
+list_of_streams = []
+
+
+# Handle result that changes global vars from requests
+def handle_result(comdres):
+    comd = comdres.comd
+    res = comdres.res
+    if comd == "SSTREAM":
+        list_of_streams.append(res)
+    else:
+        print("{} Error in command".format(ERROR_TAG))
+    print(list_of_streams)
+
 
 # Handle requests from clients
 def handle_client(conn, addr):
@@ -35,15 +53,16 @@ def handle_client(conn, addr):
             connected = False
         elif msg == STUDENT_MSG:
             # Student side
-            # Add additional header tags for different commands
-            print("student side")
+            msg_len = conn.recv(10).decode(FORMAT)
+            data = conn.recv(int(msg_len[1:9])).decode(FORMAT)
+            handle_result(student_comd.handle_command(addr, data))
         elif msg == INST_MSG:
             # Instructor side
-            # Same as student, add additional header tags for different commands
-            print("instructor side")
+            msg_len = conn.recv(10).decode(FORMAT)
+            data = conn.recv(int(msg_len[1:9])).decode(FORMAT)
+            handle_result(instructor_comd.handle_command(addr, data))
         else:
             print("{} Invalid header".format(ERROR_TAG))
-        print("{} From {}: {}".format(INFO_TAG, addr, msg))
 
     conn.close()
 
