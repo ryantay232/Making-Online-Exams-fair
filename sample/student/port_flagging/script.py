@@ -16,8 +16,7 @@ def compare(File1,File2):
     with open(File2,'r') as f:
         e=set(f.readlines())
 
-    open(diffFileName,'w').close() #Create the file
-
+    open(diffFileName,'w').close() 
 
     with open(diffFileName,'a') as f:
         for line in list(d-e):
@@ -31,7 +30,7 @@ def append(File1):
     f2.seek(0)
     f1.close() 
     f2.close() 
-    # os.remove(diffFileName)
+    os.remove(diffFileName)
 
 
 if __name__ == '__main__':
@@ -40,25 +39,10 @@ if __name__ == '__main__':
             portflaging.main()
 
     if (os.path.isfile(logFileName) == False):
-        # original = r'temp'
-        # target = r'log'
         original = tempFileName
         target = logFileName
         shutil.copyfile(original, target)
     else:
         compare(tempFileName,logFileName)
         append(logFileName)
-        # temp = open("temp").read()
-        # log = open("log").read()
 
-        # dmp = dmp_module.diff_match_patch()
-        # diff = dmp.diff_main(temp, log)
-        # dmp.diff_cleanupSemantic(diff)
-
-        # output = ""
-        # for s in diff:
-        #     output += s[1]
-
-        # f = open("log", "w")
-        # f.write(output)
-        # f.close()
