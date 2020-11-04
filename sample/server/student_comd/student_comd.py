@@ -24,6 +24,8 @@ def handle_command(addr, msg):
 
     if comd == "SSTREAM":
         res = get_streamlink(data)
+    elif comd == "PUSH":
+    elif comd == "GET":
     else:
         print("{} Invalid command".format(ERROR_TAG))
 

@@ -6,46 +6,81 @@ import base64
 from Crypto import Random
 import random
 
+# Server info
+PORT = 5050
+SERVER = socket.gethostbyname(socket.gethostname())
+ADDR = (SERVER, PORT)
+FORMAT = 'utf-8'
+
+#secret key to encrypt/decrypt eg.
+SECRET_KEY = b'0123456789ABCDEF'
+
 def client_program():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
-    host = input('your IP address->')
-    port = 5050
+    # host = input('your IP address->')
+    # port = 5050
     secret_key = input('enter secret key for encrypt/decrypt->') #must be length 16, eg. 0123456789abcdef
 
-    s.connect((host, port))
+    s.connect(ADDR)
     print("connected to server")
     connected = True
     while connected:
         try:
-            read = input('enter GET to receive test script or PUSH to submit answers->')
-            #data send would need HEADERS "!STU|GET|<data>" or "!STU|PUSH|<data>"
-            if read == "GET":
-                #get the test script from server
-                data = (f"!STU|GET")
-                send_data(s, secret_key, data)
-                #receive the file in buffers??
-                message = recv_data(s, secret_key)
-                print(message)  #this should be the test script
+            choices = """choices (enter the number):
+            1) GET
+            2) PUSH
+            3) SSTREAM
+            4) END
 
-            elif read == "PUSH":
-                #push your answer to server
-                data = (f"!STU|PUSH|")
-                #get the student answers from text or word file and send in buffers??
-                send_data(s, secret_key, data)
-            time.sleep(0.1)
-        except (socket.error, KeyboardInterrupt):
+            """
+            print(choices)
+            read = input('->')
+            if read == "4":
+                #send exit command to server
+                Header = (f"!END")
+                send_data(s, SECRET_KEY, Header)
+                connected = False
+
+            elif read == 1 or 2:
+                Header = (f"!STU")
+                send_data(s, SECRET_KEY, Header)
+                message = recv_data(s, SECRET_KEY)
+                length = (f":1024")
+                send_data(s, SECRET_KEY, length)
+                message = recv_data(s, SECRET_KEY)
+                #data send would need HEADERS "!STU|GET|<data>" or "!STU|PUSH|<data>"
+                if read == 1:
+                    #get the test script from server
+                    data = (f"{GET}|")
+                    send_data(s, SECRET_KEY, data)
+                    #receive the file in buffers??
+                    message = recv_data(s, SECRET_KEY)
+                    print(message)  #this should be the test script
+
+                elif read == 2:
+                    # push your answer to server, read from text file??
+                    answers = (f"{ }")
+                    data = (f"{PUSH}|{answers}")
+                    #get the student answers from text or word file and send in buffers??
+                    send_data(s, SECRET_KEY, data)
+
+            else:
+                print("please enter a valid number...")
+
+        except (socket.error, KeyboardInterrupt, Exception):
+            #reconnect to server
             connected = False
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
             while not connected:
                 try:
-                    print("error, connection lost, attempting to reconnect...")
+                    print("error, connection lost, attempting to reconnect to server...")
                     s.connect((host, port))  # connect to the server
                     connected = True
                     print("reconnection successful")
                 except socket.error:
-                    time.sleep(2)
+                    time.sleep(1)
                 time.sleep(0.1)
-        time.sleep(0.1)
+        time.sleep(0.01)
     print("closing client program")
     s.close()
 
