@@ -19,7 +19,7 @@ def client_program():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
     # host = input('your IP address->')
     # port = 5050
-    secret_key = input('enter secret key for encrypt/decrypt->') #must be length 16, eg. 0123456789abcdef
+    # secret_key = input('enter secret key for encrypt/decrypt->') #must be length 16, eg. 0123456789abcdef
 
     s.connect(ADDR)
     print("connected to server")
@@ -48,6 +48,7 @@ def client_program():
                 #data send would need HEADERS "!STU|GET|<data>" or "!STU|PUSH|<data>"
                 if read == "1":
                     #get the test script from server
+                    print("getting the test script from server...")
                     data = (f"{GET}|")
                     send_data(s, SECRET_KEY, data)
                     #receive the file in buffers??
@@ -56,8 +57,13 @@ def client_program():
 
                 elif read == "2":
                     # push your answer to server, read from text file??
-                    answers = (f"{ }")
-                    data = (f"{PUSH}|{answers}")
+                    print("submitting your answer to server...")
+                    answer_file = " "
+                    with open('answer.txt', 'rt') as file:
+                        for lines in file:
+                            answer_file = answer_file + lines
+
+                    data = (f"{PUSH}|{answer_file}")
                     #get the student answers from text or word file and send in buffers??
                     send_data(s, SECRET_KEY, data)
 

@@ -29,6 +29,8 @@ server.bind(ADDR)
 # Global vars
 list_of_streams = []
 
+answer_scripts = {}
+
 #secret key to encrypt/decrypt eg.
 SECRET_KEY = b'0123456789ABCDEF'
 
