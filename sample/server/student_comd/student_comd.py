@@ -10,7 +10,7 @@ ERROR_TAG = '[ERROR]'
 # Given streamkey return stream link
 def get_streamlink(msg):
     server_ip = socket.gethostbyname(socket.gethostname())
-    return ComdResult("SSTREAM", (msg, "rtmp://{}/{}".format(server_ip, msg)))
+    return ComdResult("SSTREAM", (msg, "rtmp://{}/live/{}".format(server_ip, msg)))
 
 
 def end_stream(msg):

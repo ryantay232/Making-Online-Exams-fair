@@ -8,7 +8,7 @@ from sample.student.webcam.webcam import get_webcam_list, test_webcam, stream_we
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
 
 # Server info
-HOST = "192.168.2.100"  # to change to server ip address
+HOST = "35.185.186.41"  # to change to server ip address
 PORT = 5050
 FORMAT = 'utf-8'
 
@@ -20,16 +20,19 @@ ERROR_TAG = '[ERROR]'
 def quiz_platform(n):
     # replace with your own code
     for i in range(n):
-        print("func1 {}".format(i))
+        #print("func1 {}".format(i))
+        None
 
 
 def port_flagging(n):
     # replace with your own code
     for i in range(n):
-        print("func2 {}".format(i))
+        #print("func2 {}".format(i))
+        None
 
 
 def webcam_streaming(student_id, webcam):
+    print("{} Streaming webcam...".format(INFO_TAG))
     stream_webcam(student_id, webcam, HOST)
 
 
@@ -48,8 +51,8 @@ def main():
     student_id = input("Student id: ")
 
     # authenticate student (are we still doing account and password?)
-    # sock = socket.socket()
-    # sock.conect((HOST, PORT))
+    #sock = socket.socket()
+    #sock.conect((HOST, PORT))
 
     # choose webcam
     webcam_list = get_webcam_list()

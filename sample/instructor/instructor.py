@@ -15,7 +15,7 @@ menu = """
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
 
 # Server info
-HOST = "192.168.2.100"  # to change to server ip address
+HOST = "35.185.186.41"  # to change to server ip address
 PORT = 5050
 FORMAT = 'utf-8'
 
