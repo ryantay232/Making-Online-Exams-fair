@@ -58,26 +58,19 @@ def handle_client(conn, addr):
         try:
             # msg = conn.recv(HEADER).decode(FORMAT)
             msg = recv_data(conn, SECRET_KEY, HEADER)
+            header, msg_len = str(msg).split('|')
             send_data(conn, SECRET_KEY, ' ')
             # From here onwards handle requests from clients
-            if msg == END_MSG:
+            if header == END_MSG:
                 print("{} Ending connection with {}".format(INFO_TAG, addr))
                 connected = False
-            elif msg == STUDENT_MSG:
+            elif header == STUDENT_MSG:
                 # Student side
-                # msg_len = conn.recv(10).decode(FORMAT)
-                msg_len = recv_data(conn, SECRET_KEY, 10)
-                send_data(conn, SECRET_KEY, ' ')
-                # data = conn.recv(int(msg_len[1:9])).decode(FORMAT)
-                data = recv(conn, SECRET_KEY, int(msg_len[1:9]))
+                data = recv(conn, SECRET_KEY, int(msg_len))
                 handle_result(student_comd.handle_command(addr, data))
-            elif msg == INST_MSG:
+            elif header == INST_MSG:
                 # Instructor side
-                # msg_len = conn.recv(10).decode(FORMAT)
-                msg_len = recv_data(conn, SECRET_KEY, 10)
-                send_data(conn, SECRET_KEY, ' ')
-                # data = conn.recv(int(msg_len[1:9])).decode(FORMAT)
-                data = recv(conn, SECRET_KEY, int(msg_len[1:9]))
+                data = recv(conn, SECRET_KEY, int(msg_len))
                 handle_result(instructor_comd.handle_command(addr, data))
             else:
                 print("{} Invalid header".format(ERROR_TAG))
@@ -150,7 +143,7 @@ def send_data(conn, secret_key, data):
     conn.send(data)
     print("sent data\n")
 
-#receive message from ultra96, decrypt, unpad and decode
+#receive message from client decrypt, unpad and decode
 def recv_data(s, secret_key, len):
     message = s.recv(len).decode()  #wait to receive message
     message = decrypt_message(message,secret_key)

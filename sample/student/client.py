@@ -41,23 +41,20 @@ def client_program():
                 send_data(s, SECRET_KEY, Header)
                 connected = False
 
-            elif read == 1 or 2:
-                Header = (f"!STU")
+            elif read == "1" or "2":
+                Header = (f"!STU|20480")
                 send_data(s, SECRET_KEY, Header)
                 message = recv_data(s, SECRET_KEY)
-                length = (f":1024")
-                send_data(s, SECRET_KEY, length)
-                message = recv_data(s, SECRET_KEY)
                 #data send would need HEADERS "!STU|GET|<data>" or "!STU|PUSH|<data>"
-                if read == 1:
+                if read == "1":
                     #get the test script from server
                     data = (f"{GET}|")
                     send_data(s, SECRET_KEY, data)
                     #receive the file in buffers??
-                    message = recv_data(s, SECRET_KEY)
+                    message = recv_data(s, SECRET_KEY, 20480)
                     print(message)  #this should be the test script
 
-                elif read == 2:
+                elif read == "2":
                     # push your answer to server, read from text file??
                     answers = (f"{ }")
                     data = (f"{PUSH}|{answers}")
@@ -118,12 +115,12 @@ def send_data(conn, secret_key, data):
     conn.send(data)
     print("sent data\n")
 
-#receive message from ultra96, decrypt, unpad and decode
-def recv_data(s, secret_key):
-    message = s.recv(1024).decode()  #wait to receive message
+#receive message from client decrypt, unpad and decode
+def recv_data(s, secret_key, len):
+    message = s.recv(len).decode()  #wait to receive message
     message = decrypt_message(message,secret_key)
     message = message[:-message[-1]]    #remove padding
-    message = message.decode('utf8')    #to remove b'1|rocketman|'
+    message = message.decode(FORMAT)    #to remove b'1|rocketman|'
     return message
 
 def main():
