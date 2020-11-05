@@ -10,7 +10,8 @@ ERROR_TAG = '[ERROR]'
 # Given streamkey return stream link
 def get_streamlink(msg):
     server_ip = socket.gethostbyname(socket.gethostname())
-    return ComdResult("SSTREAM", (msg, "rtmp://{}/live/{}".format(server_ip, msg)))
+    return ComdResult("SSTREAM",
+                      (msg, "rtmp://{}/live/{}".format(server_ip, msg)))
 
 
 def end_stream(msg):
@@ -31,6 +32,12 @@ def handle_command(addr, msg):
     elif comd == "ESTREAM":
         data = msg_list[1]
         res = end_stream(data)
+    elif comd == "PUSH":
+        #submit answer to server
+        res = data
+    elif comd == "GET":
+        #get the script from server
+        None
     else:
         print("{} Invalid command".format(ERROR_TAG))
 
