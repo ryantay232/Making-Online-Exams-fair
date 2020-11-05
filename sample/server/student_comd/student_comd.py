@@ -12,7 +12,6 @@ def get_streamlink(msg):
     server_ip = socket.gethostbyname(socket.gethostname())
     return ComdResult("SSTREAM", "rtmp://{}/{}".format(server_ip, msg))
 
-
 # Handle commands from clients
 def handle_command(addr, msg):
     # Add additional header tags for different commands
@@ -24,6 +23,11 @@ def handle_command(addr, msg):
 
     if comd == "SSTREAM":
         res = get_streamlink(data)
+    elif comd == "PUSH":
+        #submit answer to server
+        res = data
+    elif comd == "GET":
+        #get the script from server
     else:
         print("{} Invalid command".format(ERROR_TAG))
 
