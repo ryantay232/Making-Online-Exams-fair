@@ -6,6 +6,11 @@
 
 #need sudo to run the script
 
+# run on student end - who will start my script? 
+# do i peridically send log ot the server? or after the exam 
+# flag out on the base on restricted list and send notification on instructor end? 
+
+
 import socket
 from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
 

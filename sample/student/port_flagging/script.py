@@ -2,6 +2,7 @@ import portflaging
 from contextlib import redirect_stdout
 import os.path
 import shutil
+import json
 
 #check windows user need admin privillage to run the script anot
 
@@ -32,7 +33,6 @@ def append(File1):
     f2.close() 
     os.remove(diffFileName)
 
-
 if __name__ == '__main__':
     with open(tempFileName, 'w') as f:
         with redirect_stdout(f):
@@ -46,3 +46,15 @@ if __name__ == '__main__':
         compare(tempFileName,logFileName)
         append(logFileName)
 
+    with open('studentId.log') as l:
+        logFileContent = l.read()
+        with open('restricted_app.json','r') as ra:
+            jsonObject = json.load(ra)
+            appList = jsonObject['restricted_app']
+            for app in appList:  
+                if app in logFileContent: 
+                    print(app + " is open")
+                    # need to define ports?
+                    #need to flag out to server side how 
+    
+    # at the end of the example send log file to server
