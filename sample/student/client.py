@@ -1,10 +1,16 @@
-import socket
-import time
-import threading
-from Crypto.Cipher import AES
-import base64
-from Crypto import Random
+import os
+import sys
 import random
+import time
+import socket
+import threading
+from datetime import datetime
+import base64
+import numpy as np
+import pandas as pd
+from Crypto.Cipher import AES
+from Crypto import Random
+import math
 
 # Server info
 PORT = 5050
@@ -15,57 +21,78 @@ FORMAT = 'utf-8'
 #secret key to encrypt/decrypt eg.
 SECRET_KEY = b'0123456789ABCDEF'
 
+choices = """choices (enter the number):
+1) GET
+2) PUSH
+3) SSTREAM
+4) END
+"""
+
+# logging tags
+INFO_TAG = '[INFO]'
+ERROR_TAG = '[ERROR]'
+
+MSG_LEN = 2048000
+
 def client_program():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
-    # host = input('your IP address->')
-    # port = 5050
-    # secret_key = input('enter secret key for encrypt/decrypt->') #must be length 16, eg. 0123456789abcdef
 
     s.connect(ADDR)
     print("connected to server")
     connected = True
     while connected:
         try:
-            choices = """choices (enter the number):
-            1) GET
-            2) PUSH
-            3) SSTREAM
-            4) END
-
-            """
             print(choices)
-            read = input('->')
-            if read == "4":
+            readstr = input('->')
+            try:
+                read = int(readstr)
+            except ValueError:
+                print(f"{ERROR_TAG}, invalid format")
+            if read == 4:
                 #send exit command to server
-                Header = (f"!END")
+                Header = (f"!END|{MSG_LEN}")
                 send_data(s, SECRET_KEY, Header)
                 connected = False
 
-            elif read == "1" or "2":
-                Header = (f"!STU|20480")
+            elif read == 1 or read == 2:
+                Header = (f"!STU|{MSG_LEN}")
                 send_data(s, SECRET_KEY, Header)
                 message = recv_data(s, SECRET_KEY)
-                #data send would need HEADERS "!STU|GET|<data>" or "!STU|PUSH|<data>"
-                if read == "1":
+
+                if read == 1:
                     #get the test script from server
                     print("getting the test script from server...")
-                    data = (f"{GET}|")
+                    data = (f"{GET}| |")
                     send_data(s, SECRET_KEY, data)
-                    #receive the file in buffers??
-                    message = recv_data(s, SECRET_KEY, 20480)
+                    message = recv_data(s, SECRET_KEY, int(MSG_LEN))
                     print(message)  #this should be the test script
 
-                elif read == "2":
-                    # push your answer to server, read from text file??
-                    print("submitting your answer to server...")
+                elif read == 2:
+                    # push your answer to server,
+                    print("submitting answer script and logs file")
+                    answer_script = input('key in the name of your answer script->')
                     answer_file = " "
-                    with open('answer.txt', 'rt') as file:
-                        for lines in file:
-                            answer_file = answer_file + lines
+                    log_file = " "
 
-                    data = (f"{PUSH}|{answer_file}")
-                    #get the student answers from text or word file and send in buffers??
+                    try:
+                        with open(f'{answer_script}.txt', 'rt') as file:
+                            for lines in file:
+                                answer_file = answer_file + lines
+                        file.close()
+                    except FileNotFoundError:
+                        print(f"{ERROR_TAG}, {answer_script} not found in current directory...")
+
+                    try:
+                        with open('studentId.log', 'rt') as file1:
+                            for lines1 in file1:
+                                log_file = log_file + lines1
+                        file1.close()
+                    except FileNotFoundError:
+                        print(f"{ERROR_TAG}, logs file not found in current directory...")
+
+                    data = (f"{PUSH}|{answer_file}|{log_file}")
                     send_data(s, SECRET_KEY, data)
+                    print("submitting your answer and logs to server...")
 
             else:
                 print("please enter a valid number...")
@@ -76,7 +103,7 @@ def client_program():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
             while not connected:
                 try:
-                    print("error, connection lost, attempting to reconnect to server...")
+                    print(f"{ERROR_TAG}, connection lost, attempting to reconnect to server...")
                     s.connect((host, port))  # connect to the server
                     connected = True
                     print("reconnection successful")
@@ -115,11 +142,19 @@ def encrypt_data(data, key):
     return encoded
 
 #pad the data, encrypt and send
-def send_data(conn, secret_key, data):
+def send_data(socket, secret_key, data):
     data = padding(data)
     data = encrypt_data(data,secret_key)
-    conn.send(data)
+    socket.send(data)
     print("sent data\n")
+
+#receive message from client decrypt, unpad and decode
+def recv_data(socket, secret_key, len):
+    message = socket.recv(len).decode()  #wait to receive message
+    message = decrypt_message(message,secret_key)
+    message = message[:-message[-1]]    #remove padding
+    message = message.decode(FORMAT)    #to remove b' '
+    return message
 
 #receive message from client decrypt, unpad and decode
 def recv_data(s, secret_key, len):

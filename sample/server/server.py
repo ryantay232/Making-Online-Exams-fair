@@ -1,13 +1,23 @@
+import os
+import sys
+import random
+import time
 import socket
 import threading
-import time
+from datetime import datetime
+import base64
+import numpy as np
+import pandas as pd
+from Crypto.Cipher import AES
+from Crypto import Random
+import math
 
 import sample.server.comdresult as ComdResult
 import sample.server.student_comd.student_comd as student_comd
 import sample.server.instructor_comd.instructor_comd as instructor_comd
 
 # Server info
-HEADER = 4
+HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
@@ -29,23 +39,23 @@ server.bind(ADDR)
 # Global vars
 list_of_streams = []
 
-answer_scripts = {}
-
 #secret key to encrypt/decrypt eg.
 SECRET_KEY = b'0123456789ABCDEF'
 
 # Handle result that changes global vars from requests
-def handle_result(comdres):
+def handle_result(comdres, conn):
     comd = comdres.comd
     res = comdres.res
     if comd == "SSTREAM":
         list_of_streams.append(res)
     elif comd == "GET":
         #get the test script
-        print("test")
+        print("sending student the quiz")
+        send_data(conn,SECRET_KEY,res)
     elif comd == "PUSH":
         #submit test script
-        print("test")
+        print("saving student script")
+        file = open
     else:
         print("{} Error in command".format(ERROR_TAG))
     print(list_of_streams)
@@ -58,33 +68,35 @@ def handle_client(conn, addr):
     connected = True
     while connected:
         try:
-            # msg = conn.recv(HEADER).decode(FORMAT)
             msg = recv_data(conn, SECRET_KEY, HEADER)
             header, msg_len = str(msg).split('|')
             send_data(conn, SECRET_KEY, ' ')
             # From here onwards handle requests from clients
             if header == END_MSG:
                 print("{} Ending connection with {}".format(INFO_TAG, addr))
+                print(header)
                 connected = False
             elif header == STUDENT_MSG:
                 # Student side
-                data = recv(conn, SECRET_KEY, int(msg_len))
-                handle_result(student_comd.handle_command(addr, data))
+                data = recv_data(conn, SECRET_KEY, int(msg_len))
+                send_data(conn, SECRET_KEY, ' ')
+                handle_result(student_comd.handle_command(addr, data), conn)
             elif header == INST_MSG:
                 # Instructor side
-                data = recv(conn, SECRET_KEY, int(msg_len))
-                handle_result(instructor_comd.handle_command(addr, data))
+                data = recv_data(conn, SECRET_KEY, int(msg_len))
+                send_data(conn, SECRET_KEY, ' ')
+                handle_result(instructor_comd.handle_command(addr, data), conn)
             else:
                 print("{} Invalid header".format(ERROR_TAG))
 
-        except (socket.error, KeyboardInterrupt):
+        except (socket.error, KeyboardInterrupt, Exception):
             #reconnecting to client
             print(f"error, connection lost for thread {threading.get_ident()}")
             conn.close()
             time.sleep(1)
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # get instance
             try:
-                server_socket.bind((host, int(port)))  # bind host address and port together
+                server_socket.bind(ADDR)  # bind host address and port together
             except socket.error as e:
                 print(str(e))
             print(f"attempting to reconnect on thread {threading.get_ident()}...")
@@ -126,7 +138,6 @@ def decrypt_message(message,key):
     iv = decoded_message[:16]
     cipher = AES.new(key, AES.MODE_CBC, iv)
     decrypted_message = cipher.decrypt(decoded_message[16:])
-    #print(f"{decrypt_message}")
     return decrypted_message
 
 #encrypt the message
@@ -139,18 +150,18 @@ def encrypt_data(data, key):
     return encoded
 
 #pad the data, encrypt and send
-def send_data(conn, secret_key, data):
+def send_data(socket, secret_key, data):
     data = padding(data)
     data = encrypt_data(data,secret_key)
-    conn.send(data)
+    socket.send(data)
     print("sent data\n")
 
 #receive message from client decrypt, unpad and decode
-def recv_data(s, secret_key, len):
-    message = s.recv(len).decode()  #wait to receive message
+def recv_data(socket, secret_key, len):
+    message = socket.recv(len).decode()  #wait to receive message
     message = decrypt_message(message,secret_key)
     message = message[:-message[-1]]    #remove padding
-    message = message.decode(FORMAT)    #to remove b'1|rocketman|'
+    message = message.decode(FORMAT)    #to remove b' '
     return message
 
 def main():

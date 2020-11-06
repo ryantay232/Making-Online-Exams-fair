@@ -19,15 +19,34 @@ def handle_command(addr, msg):
     msg_list = msg.split('|')
     comd = msg_list[0]
     data = msg_list[1]
+    data1 = msg_list[2]
     res = None
 
     if comd == "SSTREAM":
         res = get_streamlink(data)
     elif comd == "PUSH":
         #submit answer to server
-        res = data
+        print("saving students answer scripts")
+        f = open(f'{addr}_answer.txt', 'w')
+        f1 = open(f'{addr}_logs.txt', 'w')
+
+        f.write(data)
+        f1.write(data1)
+
+        f.close()
+        f1.close()
     elif comd == "GET":
         #get the script from server
+        print("get script")
+        quiz_file = " "
+        try:
+            with open('quiz.txt', 'rt') as file:
+                for lines in file:
+                    quiz_file = quiz_file + lines
+                    
+            res = quiz_file
+        except FileNotFoundError:
+            print(f"{ERROR_TAG}, quiz file not found in directory...")
     else:
         print("{} Invalid command".format(ERROR_TAG))
 
