@@ -57,15 +57,20 @@ def client_program():
             elif read == 1 or read == 2:
                 Header = (f"!STU|{MSG_LEN}")
                 send_data(s, SECRET_KEY, Header)
-                message = recv_data(s, SECRET_KEY)
+                message = recv_data(s, SECRET_KEY, int(MSG_LEN))
 
                 if read == 1:
                     #get the test script from server
-                    print("getting the test script from server...")
-                    data = (f"{GET}| |")
+                    print("getting the test script from server")
+                    data = (f"GET| |")
                     send_data(s, SECRET_KEY, data)
                     message = recv_data(s, SECRET_KEY, int(MSG_LEN))
                     print(message)  #this should be the test script
+                    try:
+                        f = open(f'quiz.txt', 'w')
+                        f.write(message)
+                    except:
+                        print(f"{ERROR_TAG}, cannot write to file...")
 
                 elif read == 2:
                     # push your answer to server,
@@ -74,37 +79,45 @@ def client_program():
                     answer_file = " "
                     log_file = " "
 
+                    d = os.getcwd()
+                    d1 = os.path.join(d, "submit")
+                    fname_ans = os.path.join(d1, f"{answer_script}.txt")
+                    fname_logs = os.path.join(d1, f"studentId.log")
+
                     try:
-                        with open(f'{answer_script}.txt', 'rt') as file:
+                        with open(fname_ans, 'rt') as file:
                             for lines in file:
                                 answer_file = answer_file + lines
                         file.close()
                     except FileNotFoundError:
                         print(f"{ERROR_TAG}, {answer_script} not found in current directory...")
+                        continue
 
                     try:
-                        with open('studentId.log', 'rt') as file1:
+                        with open(fname_logs, 'rt') as file1:
                             for lines1 in file1:
                                 log_file = log_file + lines1
                         file1.close()
                     except FileNotFoundError:
                         print(f"{ERROR_TAG}, logs file not found in current directory...")
+                        continue
 
-                    data = (f"{PUSH}|{answer_file}|{log_file}")
+                    data = (f"PUSH|{answer_file}|{log_file}")
                     send_data(s, SECRET_KEY, data)
-                    print("submitting your answer and logs to server...")
+                    message = recv_data(s, SECRET_KEY, int (MSG_LEN))
+                    print("submitting your answer and logs to server")
 
             else:
                 print("please enter a valid number...")
 
-        except (socket.error, KeyboardInterrupt, Exception):
+        except (socket.error, KeyboardInterrupt):
             #reconnect to server
             connected = False
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
             while not connected:
                 try:
                     print(f"{ERROR_TAG}, connection lost, attempting to reconnect to server...")
-                    s.connect((host, port))  # connect to the server
+                    s.connect(ADDR)  # connect to the server
                     connected = True
                     print("reconnection successful")
                 except socket.error:
@@ -119,7 +132,7 @@ def padding(message):
     length = 16 - (len(message) % 16)
     message = message.encode()
     message += bytes([length])*length
-    print(f"padding: {message}")
+    #print(f"padding: {message}")
     return message
 
 #decrypt the message
@@ -138,7 +151,7 @@ def encrypt_data(data, key):
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = base64.b64encode(iv + cipher.encrypt(data))
-    print(f"sending encrypted data: {encoded}")
+    #print(f"sending encrypted data: {encoded}")
     return encoded
 
 #pad the data, encrypt and send

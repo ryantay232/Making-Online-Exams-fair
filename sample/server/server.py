@@ -43,19 +43,35 @@ list_of_streams = []
 SECRET_KEY = b'0123456789ABCDEF'
 
 # Handle result that changes global vars from requests
-def handle_result(comdres, conn):
+def handle_result(comdres, conn, addr):
     comd = comdres.comd
     res = comdres.res
+    res1 = comdres.res1
     if comd == "SSTREAM":
         list_of_streams.append(res)
     elif comd == "GET":
-        #get the test script
+        #send quiz to students
         print("sending student the quiz")
         send_data(conn,SECRET_KEY,res)
     elif comd == "PUSH":
-        #submit test script
+        #save answer script in receive folder
         print("saving student script")
-        file = open
+        print("saving students answer scripts")
+
+        d = os.getcwd()
+        d1 = os.path.join(d, "received")
+        fname_ans = os.path.join(d1, f"{addr}_answer.txt")
+        fname_logs = os.path.join(d1, f"{addr}_logs.txt")
+
+        f = open(fname_ans, 'w')
+        f1 = open(fname_logs, 'w')
+
+        f.write(res)
+        f1.write(res1)
+
+        f.close()
+        f1.close()
+        send_data(conn, SECRET_KEY, ' ')
     else:
         print("{} Error in command".format(ERROR_TAG))
     print(list_of_streams)
@@ -79,17 +95,19 @@ def handle_client(conn, addr):
             elif header == STUDENT_MSG:
                 # Student side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
-                send_data(conn, SECRET_KEY, ' ')
-                handle_result(student_comd.handle_command(addr, data), conn)
+                # d1, d2, d3 = str(data).split('|')
+                # print(d2)
+                # print(d3)
+                handle_result(student_comd.handle_command(addr, data), conn, addr)
             elif header == INST_MSG:
                 # Instructor side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
                 send_data(conn, SECRET_KEY, ' ')
-                handle_result(instructor_comd.handle_command(addr, data), conn)
+                handle_result(instructor_comd.handle_command(addr, data), conn, addr)
             else:
                 print("{} Invalid header".format(ERROR_TAG))
 
-        except (socket.error, KeyboardInterrupt, Exception):
+        except (socket.error, KeyboardInterrupt):
             #reconnecting to client
             print(f"error, connection lost for thread {threading.get_ident()}")
             conn.close()

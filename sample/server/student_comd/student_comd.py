@@ -12,11 +12,14 @@ def get_streamlink(msg):
     server_ip = socket.gethostbyname(socket.gethostname())
     return ComdResult("SSTREAM", "rtmp://{}/{}".format(server_ip, msg))
 
+def push_script(answer_file, log_file):
+    return ComdResult("PUSH", answer_file, log_file)
+
 # Handle commands from clients
 def handle_command(addr, msg):
     # Add additional header tags for different commands
-    print("{} Student from {}: {}".format(INFO_TAG, addr, msg))
-    msg_list = msg.split('|')
+    print("{} Student from {}: ".format(INFO_TAG, addr))
+    msg_list = str(msg).split('|')
     comd = msg_list[0]
     data = msg_list[1]
     data1 = msg_list[2]
@@ -26,15 +29,7 @@ def handle_command(addr, msg):
         res = get_streamlink(data)
     elif comd == "PUSH":
         #submit answer to server
-        print("saving students answer scripts")
-        f = open(f'{addr}_answer.txt', 'w')
-        f1 = open(f'{addr}_logs.txt', 'w')
-
-        f.write(data)
-        f1.write(data1)
-
-        f.close()
-        f1.close()
+        res = push_script(data, data1)
     elif comd == "GET":
         #get the script from server
         print("get script")
@@ -43,7 +38,7 @@ def handle_command(addr, msg):
             with open('quiz.txt', 'rt') as file:
                 for lines in file:
                     quiz_file = quiz_file + lines
-                    
+
             res = quiz_file
         except FileNotFoundError:
             print(f"{ERROR_TAG}, quiz file not found in directory...")
