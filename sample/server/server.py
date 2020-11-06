@@ -52,14 +52,26 @@ def handle_result(comdres, conn, addr):
     elif comd == "GET":
         #send quiz to students
         print("sending student the quiz")
-        send_data(conn,SECRET_KEY,res)
+        d = os.getcwd()
+        d1 = os.path.join(d, "server_files")
+        fname_quiz = os.path.join(d1, f"quiz.txt")
+
+        quiz_file = " "
+        try:
+            with open(fname_quiz, 'rt') as file:
+                for lines in file:
+                    quiz_file = quiz_file + lines
+        except FileNotFoundError:
+            print(f"{ERROR_TAG}, quiz file not found in directory...")
+        send_data(conn,SECRET_KEY,quiz_file)
+
     elif comd == "PUSH":
         #save answer script in receive folder
         print("saving student script")
         print("saving students answer scripts")
 
         d = os.getcwd()
-        d1 = os.path.join(d, "received")
+        d1 = os.path.join(d, "received_files")
         fname_ans = os.path.join(d1, f"{addr}_answer.txt")
         fname_logs = os.path.join(d1, f"{addr}_logs.txt")
 
@@ -72,6 +84,7 @@ def handle_result(comdres, conn, addr):
         f.close()
         f1.close()
         send_data(conn, SECRET_KEY, ' ')
+
     else:
         print("{} Error in command".format(ERROR_TAG))
     print(list_of_streams)
@@ -107,7 +120,7 @@ def handle_client(conn, addr):
             else:
                 print("{} Invalid header".format(ERROR_TAG))
 
-        except (socket.error, KeyboardInterrupt):
+        except (socket.error, KeyboardInterrupt, Exception):
             #reconnecting to client
             print(f"error, connection lost for thread {threading.get_ident()}")
             conn.close()
@@ -146,7 +159,7 @@ def padding(message):
     length = 16 - (len(message) % 16)
     message = message.encode()
     message += bytes([length])*length
-    print(f"padding: {message}")
+    # print(f"padding: {message}")
     return message
 
 #decrypt the message
@@ -164,7 +177,7 @@ def encrypt_data(data, key):
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = base64.b64encode(iv + cipher.encrypt(data))
-    print(f"sending encrypted data: {encoded}")
+    # print(f"sending encrypted data: {encoded}")
     return encoded
 
 #pad the data, encrypt and send
@@ -172,7 +185,7 @@ def send_data(socket, secret_key, data):
     data = padding(data)
     data = encrypt_data(data,secret_key)
     socket.send(data)
-    print("sent data\n")
+    # print("sent data\n")
 
 #receive message from client decrypt, unpad and decode
 def recv_data(socket, secret_key, len):

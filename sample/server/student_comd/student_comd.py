@@ -15,6 +15,9 @@ def get_streamlink(msg):
 def push_script(answer_file, log_file):
     return ComdResult("PUSH", answer_file, log_file)
 
+def get_quiz():
+    return ComdResult("GET")
+
 # Handle commands from clients
 def handle_command(addr, msg):
     # Add additional header tags for different commands
@@ -32,16 +35,7 @@ def handle_command(addr, msg):
         res = push_script(data, data1)
     elif comd == "GET":
         #get the script from server
-        print("get script")
-        quiz_file = " "
-        try:
-            with open('quiz.txt', 'rt') as file:
-                for lines in file:
-                    quiz_file = quiz_file + lines
-
-            res = quiz_file
-        except FileNotFoundError:
-            print(f"{ERROR_TAG}, quiz file not found in directory...")
+        res = get_quiz()
     else:
         print("{} Invalid command".format(ERROR_TAG))
 

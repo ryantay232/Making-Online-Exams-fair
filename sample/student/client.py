@@ -61,16 +61,21 @@ def client_program():
 
                 if read == 1:
                     #get the test script from server
-                    print("getting the test script from server")
-                    data = (f"GET| |")
+                    print("getting the quiz from server")
+                    data = (f"GET| | ")
                     send_data(s, SECRET_KEY, data)
                     message = recv_data(s, SECRET_KEY, int(MSG_LEN))
-                    print(message)  #this should be the test script
+                    # print(message)  #this should be the test script
                     try:
-                        f = open(f'quiz.txt', 'w')
-                        f.write(message)
+                        d = os.getcwd()
+                        d1 = os.path.join(d, "files_to_submit")
+                        fname_quiz = os.path.join(d1, "quiz.txt")
+                        file = open(fname_quiz, 'w')
+                        file.write(message)
+                        file.close()
                     except:
                         print(f"{ERROR_TAG}, cannot write to file...")
+                    print(f"{INFO_TAG} received quiz successfully")
 
                 elif read == 2:
                     # push your answer to server,
@@ -80,7 +85,7 @@ def client_program():
                     log_file = " "
 
                     d = os.getcwd()
-                    d1 = os.path.join(d, "submit")
+                    d1 = os.path.join(d, "files_to_submit")
                     fname_ans = os.path.join(d1, f"{answer_script}.txt")
                     fname_logs = os.path.join(d1, f"studentId.log")
 
@@ -105,12 +110,12 @@ def client_program():
                     data = (f"PUSH|{answer_file}|{log_file}")
                     send_data(s, SECRET_KEY, data)
                     message = recv_data(s, SECRET_KEY, int (MSG_LEN))
-                    print("submitting your answer and logs to server")
+                    print(f"{INFO_TAG} successfully submitted answer and logs to server")
 
             else:
                 print("please enter a valid number...")
 
-        except (socket.error, KeyboardInterrupt):
+        except (socket.error, KeyboardInterrupt, Exception):
             #reconnect to server
             connected = False
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
@@ -159,7 +164,7 @@ def send_data(socket, secret_key, data):
     data = padding(data)
     data = encrypt_data(data,secret_key)
     socket.send(data)
-    print("sent data\n")
+    # print("sent data\n")
 
 #receive message from client decrypt, unpad and decode
 def recv_data(socket, secret_key, len):
@@ -167,14 +172,6 @@ def recv_data(socket, secret_key, len):
     message = decrypt_message(message,secret_key)
     message = message[:-message[-1]]    #remove padding
     message = message.decode(FORMAT)    #to remove b' '
-    return message
-
-#receive message from client decrypt, unpad and decode
-def recv_data(s, secret_key, len):
-    message = s.recv(len).decode()  #wait to receive message
-    message = decrypt_message(message,secret_key)
-    message = message[:-message[-1]]    #remove padding
-    message = message.decode(FORMAT)    #to remove b'1|rocketman|'
     return message
 
 def main():
