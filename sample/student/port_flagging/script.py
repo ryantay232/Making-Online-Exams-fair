@@ -4,8 +4,6 @@ import os.path
 import shutil
 import json
 
-#check windows user need admin privillage to run the script anot
-
 diffFileName = 'diff.log'
 logFileName = 'studentId.log'
 tempFileName = 'temp.log'
@@ -46,15 +44,25 @@ if __name__ == '__main__':
         compare(tempFileName,logFileName)
         append(logFileName)
 
+    #open log file to read if student have access app in the restricted list
     with open('studentId.log') as l:
         logFileContent = l.read()
-        with open('restricted_app.json','r') as ra:
-            jsonObject = json.load(ra)
-            appList = jsonObject['restricted_app']
-            for app in appList:  
-                if app in logFileContent: 
-                    print(app + " is open")
-                    # need to define ports?
-                    #need to flag out to server side how 
+
+    #load restricted app list
+    with open('restricted_app.json','r') as ra:
+        jsonObject = json.load(ra)
+        appList = jsonObject['restricted_app']
+
+    #load the current access app on the json end
+    with open('sutdentId_access.json','r') as access:
+        jsonObjectAccess = json.load(access)
+        accessApp = set(jsonObjectAccess['app_accessed'])
+        for app in appList:  
+            if app in logFileContent: 
+                accessApp.add(app)
+        jsonObjectAccess['app_accessed'] = list(accessApp)
     
-    # at the end of the example send log file to server
+    #update the app accessed     
+    with open('sutdentId_access.json','w') as access:
+        json.dump(jsonObjectAccess,access)
+
