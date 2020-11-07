@@ -1,0 +1,261 @@
+ Proto Local address                  Remote address                 Status        PID    Program name
+tcp   192.168.1.254:61538            104.244.42.2:443               ESTABLISHED   34144  Tweetbot
+tcp   127.0.0.1:6463                 -                              LISTEN        33861  Discord Helper 
+tcp   192.168.1.254:62832            162.159.133.234:443            ESTABLISHED   33856  Discord Helper
+tcp   192.168.1.254:50028            162.159.137.232:443            ESTABLISHED   33856  Discord Helper
+tcp   192.168.1.254:50665            162.159.136.232:443            ESTABLISHED   33856  Discord Helper
+tcp   192.168.1.254:58873            35.186.224.47:443              ESTABLISHED   33856  Discord Helper
+tcp   192.168.1.254:62834            157.240.7.54:443               ESTABLISHED   33808  WhatsApp Helper
+tcp   0.0.0.0:51784                  -                              LISTEN        33140  Music
+tcp6  :::51784                       -                              LISTEN        33140  Music
+udp   0.0.0.0:0                      -                              NONE          31723  PerfPowerServic
+udp   0.0.0.0:0                      -                              NONE          31723  PerfPowerServic
+udp   0.0.0.0:0                      -                              NONE          31723  PerfPowerServic
+udp   0.0.0.0:0                      -                              NONE          31723  PerfPowerServic
+udp   0.0.0.0:137                    -                              NONE          31652  netbiosd
+udp   0.0.0.0:138                    -                              NONE          31652  netbiosd
+tcp   127.0.0.1:44950                -                              LISTEN        30691  figma_agent
+tcp   127.0.0.1:44970                -                              LISTEN        30691  figma_agent
+tcp   127.0.0.1:44960                -                              LISTEN        30691  figma_agent
+tcp   192.168.1.254:59909            34.237.73.95:443               ESTABLISHED   29600  Notion
+tcp   192.168.1.254:50680            104.18.23.110:443              ESTABLISHED   29600  Notion
+tcp   192.168.1.254:60024            104.18.23.110:443              ESTABLISHED   29600  Notion
+tcp   192.168.1.254:50681            54.244.190.144:443             ESTABLISHED   29600  Notion
+tcp   0.0.0.0:49361                  -                              LISTEN        20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50784 fe80:a::1441:4111:7861:8509:50246 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50734 fe80:a::1441:4111:7861:8509:50237 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50750 fe80:a::1441:4111:7861:8509:50239 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50766 fe80:a::1441:4111:7861:8509:50241 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50769 fe80:a::1441:4111:7861:8509:50242 ESTABLISHED   20900  AMPDevicesAgent
+udp   0.0.0.0:0                      -                              NONE          5477   SystemUIServer
+udp   0.0.0.0:0                      -                              NONE          5477   SystemUIServer
+udp   0.0.0.0:0                      -                              NONE          5312   iStat Menus Sta
+tcp   192.168.1.254:49500            217.146.190.234:993            CLOSE_WAIT    1138   Mail
+tcp   192.168.1.254:59925            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59926            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59948            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59925            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59926            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49500            217.146.190.234:993            CLOSE_WAIT    1138   Mail
+tcp   192.168.1.254:50403            52.98.40.34:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59948            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49475            217.146.190.234:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50008            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50404            52.98.40.34:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50405            52.98.40.34:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50008            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:57803            74.125.68.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49475            217.146.190.234:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49993            172.217.194.108:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:58210            74.125.68.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:58210            74.125.68.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:57803            74.125.68.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:64994            172.217.194.108:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49249            217.146.190.234:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:64994            172.217.194.108:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49249            217.146.190.234:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:62579            52.98.33.226:993               ESTABLISHED   1138   Mail
+tcp   192.168.1.254:62579            52.98.33.226:993               ESTABLISHED   1138   Mail
+tcp   192.168.1.254:49993            172.217.194.108:993            ESTABLISHED   1138   Mail
+tcp   192.168.1.254:57798            52.98.65.18:143                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:57798            52.98.65.18:143                ESTABLISHED   1138   Mail
+tcp   127.0.0.1:4380                 -                              LISTEN        740    SpotifyWebHelpe
+tcp   0.0.0.0:59866                  -                              LISTEN        727    LogiMgrDaemon
+udp   0.0.0.0:59867                  -                              NONE          727    LogiMgrDaemon
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+udp   0.0.0.0:0                      -                              NONE          614    sharingd
+tcp   0.0.0.0:3689                   -                              LISTEN        613    mediasharingd
+tcp6  :::3689                        -                              LISTEN        613    mediasharingd
+tcp   192.168.1.254:59974            34.226.104.240:443             ESTABLISHED   608    firefox
+tcp   192.168.1.254:59906            100.20.6.188:443               ESTABLISHED   608    firefox
+tcp   192.168.1.254:59966            52.0.218.127:443               ESTABLISHED   608    firefox
+tcp   192.168.1.254:50618            13.251.87.140:443              ESTABLISHED   602    parsecd
+tcp   192.168.1.254:49217            140.82.112.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:49425            140.82.112.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:49425            140.82.112.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:49217            140.82.112.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:65497            140.82.113.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:65497            140.82.113.25:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50622            172.217.27.4:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:49211            140.82.113.26:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:49211            140.82.113.26:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50030            74.125.200.189:443             ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50652            104.16.182.15:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50625            172.217.194.155:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50623            74.125.130.157:443             ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50653            104.16.182.15:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50624            172.217.27.4:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50630            74.125.130.94:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50161            74.125.200.94:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50631            74.125.200.94:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50632            172.217.194.139:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50634            104.16.19.94:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50636            172.217.194.100:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50654            151.101.0.233:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50639            74.125.24.95:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50629            74.125.24.113:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50655            151.101.194.109:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50646            172.217.194.84:443             ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50640            74.125.24.94:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50658            13.227.255.84:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50673            172.217.194.113:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50659            104.16.19.94:443               ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50662            151.101.10.208:443             ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50661            185.199.109.153:443            ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50663            104.16.182.15:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:50674            172.217.194.113:443            ESTABLISHED   597    com.apple.WebKi
+tcp6  fe80:a::406:473c:6cca:c6a7:50763 fe80:a::1441:4111:7861:8509:50240 ESTABLISHED   566    AMPDeviceDiscov
+tcp6  fe80:a::406:473c:6cca:c6a7:50732 fe80:a::1441:4111:7861:8509:50236 ESTABLISHED   566    AMPDeviceDiscov
+tcp6  fe80:a::406:473c:6cca:c6a7:50751 fe80:a::1441:4111:7861:8509:50238 ESTABLISHED   566    AMPDeviceDiscov
+udp   0.0.0.0:0                      -                              NONE          549    WirelessRadioMa
+udp   0.0.0.0:0                      -                              NONE          509    WiFiAgent
+udp   0.0.0.0:0                      -                              NONE          491    identityservice
+tcp6  fe80:11::6a40:de77:8bb4:d475:1024 fe80:11::f1f2:717e:5edb:4241:1024 ESTABLISHED   491    identityservice
+tcp6  fe80:11::6a40:de77:8bb4:d475:1025 fe80:11::f1f2:717e:5edb:4241:47688 ESTABLISHED   491    identityservice
+tcp6  fe80:11::6a40:de77:8bb4:d475:1025 fe80:11::f1f2:717e:5edb:4241:47688 ESTABLISHED   491    identityservice
+tcp6  fe80:15::8877:4ec:8970:90c8:1024 fe80:15::c1cd:a345:1657:411f:1024 ESTABLISHED   491    identityservice
+tcp6  fe80:15::8877:4ec:8970:90c8:1025 fe80:15::c1cd:a345:1657:411f:15105 ESTABLISHED   491    identityservice
+tcp6  fe80:15::8877:4ec:8970:90c8:1025 fe80:15::c1cd:a345:1657:411f:15105 ESTABLISHED   491    identityservice
+tcp   0.0.0.0:59779                  -                              LISTEN        488    rapportd
+tcp6  :::59779                       -                              LISTEN        488    rapportd
+udp   0.0.0.0:0                      -                              NONE          488    rapportd
+udp   0.0.0.0:0                      -                              NONE          488    rapportd
+udp   0.0.0.0:0                      -                              NONE          488    rapportd
+tcp   192.168.1.254:59779            192.168.1.219:53910            ESTABLISHED   488    rapportd
+udp   0.0.0.0:3722                   -                              NONE          488    rapportd
+udp   0.0.0.0:0                      -                              NONE          488    rapportd
+tcp   192.168.1.254:59779            192.168.1.19:50092             ESTABLISHED   488    rapportd
+tcp   192.168.1.254:59912            192.168.1.3:49152              ESTABLISHED   488    rapportd
+tcp   0.0.0.0:49791                  -                              LISTEN        487    PDF Expert
+tcp6  :::49791                       -                              LISTEN        487    PDF Expert
+tcp   192.168.1.254:50648            17.248.154.113:443             ESTABLISHED   462    cloudd
+tcp   192.168.1.254:62380            17.248.154.208:443             ESTABLISHED   462    cloudd
+tcp   192.168.1.254:50315            17.248.154.177:443             ESTABLISHED   462    cloudd
+tcp   192.168.1.254:50684            17.248.154.236:443             ESTABLISHED   462    cloudd
+udp   0.0.0.0:0                      -                              NONE          426    systemstats
+tcp6  ::1:631                        -                              LISTEN        410    cupsd
+tcp   127.0.0.1:631                  -                              LISTEN        410    cupsd
+tcp   0.0.0.0:61500                  -                              LISTEN        407    xartstorageremo
+tcp6  :::61500                       -                              LISTEN        407    xartstorageremo
+tcp6  fe80:4::aede:48ff:fe00:1122:59679 fe80:4::aede:48ff:fe33:4455:52032 ESTABLISHED   406    biometrickitd
+tcp6  fe80:4::aede:48ff:fe00:1122:59760 fe80:4::aede:48ff:fe33:4455:61000 ESTABLISHED   402    eoshostd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp6  :::0                           -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:0                      -                              NONE          349    airportd
+udp   0.0.0.0:5353                   -                              NONE          342    mDNSResponder
+udp6  :::5353                        -                              NONE          342    mDNSResponder
+udp   0.0.0.0:51104                  -                              NONE          342    mDNSResponder
+udp6  :::51104                       -                              NONE          342    mDNSResponder
+udp   0.0.0.0:0                      -                              NONE          261    loginwindow
+udp   0.0.0.0:0                      -                              NONE          250    AirPlayXPCHelpe
+tcp   192.168.1.254:62109            192.168.1.3:7000               ESTABLISHED   250    AirPlayXPCHelpe
+udp   0.0.0.0:0                      -                              NONE          250    AirPlayXPCHelpe
+tcp   192.168.1.254:62110            192.168.1.3:49268              ESTABLISHED   250    AirPlayXPCHelpe
+udp   0.0.0.0:0                      -                              NONE          245    bluetoothd
+udp6  :::88                          -                              NONE          236    kdc
+tcp6  :::88                          -                              LISTEN        236    kdc
+udp   0.0.0.0:88                     -                              NONE          236    kdc
+tcp   0.0.0.0:88                     -                              LISTEN        236    kdc
+tcp   0.0.0.0:7362                   -                              LISTEN        229    ExamplifyServic
+udp   0.0.0.0:0                      -                              NONE          228    locationd
+tcp6  fe80:a::406:473c:6cca:c6a7:50701 fe80:a::1441:4111:7861:8509:50235 ESTABLISHED   224    usbmuxd
+tcp   192.168.1.254:59910            17.57.145.71:443               ESTABLISHED   220    apsd
+udp   0.0.0.0:0                      -                              NONE          193    configd
+udp   0.0.0.0:0                      -                              NONE          193    configd
+udp   0.0.0.0:0                      -                              NONE          193    configd
+udp   0.0.0.0:0                      -                              NONE          193    configd
+udp   0.0.0.0:0                      -                              NONE          192    systemstats
+udp   0.0.0.0:50383                  -                              NONE          178    syslogd
+tcp6  :::5900                        -                              LISTEN        1      launchd
+tcp   0.0.0.0:5900                   -                              LISTEN        1      launchd
+tcp6  :::5900                        -                              LISTEN        1      launchd
+tcp   0.0.0.0:5900                   -                              LISTEN        1      launchd
+udp   0.0.0.0:137                    -                              NONE          1      launchd
+udp   0.0.0.0:138                    -                              NONE          1      launchd
+tcp   192.168.1.254:50826            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50809            172.217.194.95:443             ESTABLISHED   608    firefox
+tcp   192.168.1.254:50821            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50788            204.246.164.22:443             ESTABLISHED   837    com.apple.WebKi
+tcp   192.168.1.254:50813            40.100.29.210:443              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50824            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50819            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50823            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50825            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50818            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50828            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50830            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp6  fe80:a::406:473c:6cca:c6a7:50751 fe80:a::1441:4111:7861:8509:50238 CLOSE_WAIT    566    AMPDeviceDiscov
+tcp   192.168.1.254:50817            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50814            40.100.29.210:443              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50815            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50816            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50857            13.225.7.110:443               ESTABLISHED   608    firefox
+tcp   192.168.1.254:50829            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50834            74.125.24.109:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50827            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50820            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50822            52.98.65.18:443                ESTABLISHED   1138   Mail
+tcp6  fe80:a::406:473c:6cca:c6a7:50945 fe80:a::1441:4111:7861:8509:50253 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50918 fe80:a::1441:4111:7861:8509:50248 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50924 fe80:a::1441:4111:7861:8509:50250 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50934 fe80:a::1441:4111:7861:8509:50252 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50920 fe80:a::1441:4111:7861:8509:50249 ESTABLISHED   566    AMPDeviceDiscov
+tcp6  fe80:a::406:473c:6cca:c6a7:50963 fe80:a::1441:4111:7861:8509:50258 ESTABLISHED   20900  AMPDevicesAgent
+tcp6  fe80:a::406:473c:6cca:c6a7:50948 fe80:a::1441:4111:7861:8509:50254 ESTABLISHED   566    AMPDeviceDiscov
+tcp6  fe80:a::406:473c:6cca:c6a7:50929 fe80:a::1441:4111:7861:8509:50251 ESTABLISHED   566    AMPDeviceDiscov
+tcp6  fe80:a::406:473c:6cca:c6a7:50891 fe80:a::1441:4111:7861:8509:50247 ESTABLISHED   224    usbmuxd
+tcp   192.168.1.254:50967            17.248.154.73:443              ESTABLISHED   462    cloudd
+tcp   192.168.1.254:55542            35.244.181.201:443             ESTABLISHED   36604  firefox
+tcp   192.168.1.254:54328            74.125.130.108:993             ESTABLISHED   1138   Mail
+tcp   192.168.1.254:55148            162.159.128.235:443            ESTABLISHED   38074  Discord Helper
+tcp6  :::56236                       -                              LISTEN        36852  PDF Expert
+tcp   192.168.1.254:52475            74.125.200.108:993             ESTABLISHED   1138   Mail
+tcp   0.0.0.0:56236                  -                              LISTEN        36852  PDF Expert
+tcp   192.168.1.254:55003            162.159.138.234:443            ESTABLISHED   38074  Discord Helper
+tcp   192.168.1.254:59974            34.226.104.240:443             CLOSE         36604  firefox
+udp   0.0.0.0:58026                  -                              NONE          38080  Discord Helper 
+udp   0.0.0.0:65361                  -                              NONE          38080  Discord Helper 
+tcp   192.168.1.254:52939            74.125.200.108:993             ESTABLISHED   1138   Mail
+tcp   192.168.1.254:55548            162.159.130.235:443            ESTABLISHED   38074  Discord Helper
+tcp   192.168.1.254:57906            40.100.29.18:143               ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59906            100.20.6.188:443               CLOSE         36604  firefox
+udp   0.0.0.0:55073                  -                              NONE          38080  Discord Helper 
+tcp   192.168.1.254:53810            140.82.113.26:443              ESTABLISHED   597    com.apple.WebKi
+tcp   192.168.1.254:55000            162.159.129.233:443            ESTABLISHED   38074  Discord Helper
+tcp   192.168.1.254:59779            192.168.1.19:55502             ESTABLISHED   488    rapportd
+tcp   127.0.0.1:6463                 -                              LISTEN        38080  Discord Helper 
+tcp   192.168.1.254:51818            173.255.206.146:443            ESTABLISHED   36100  Fantastical 2
+tcp   192.168.1.254:54997            162.159.135.232:443            ESTABLISHED   38074  Discord Helper
+tcp   192.168.1.254:54348            54.69.126.142:443              ESTABLISHED   36604  firefox
+tcp6  fe80:a::406:473c:6cca:c6a7:55603 fe80:a::1441:4111:7861:8509:56455 CLOSE_WAIT    566    AMPDeviceDiscov
+tcp   192.168.1.254:54236            13.225.7.110:443               CLOSE_WAIT    36604  firefox
+tcp   192.168.1.254:54330            77.238.185.51:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:55335            104.18.22.110:443              ESTABLISHED   29600  Notion
+tcp   192.168.1.254:54829            77.238.185.51:993              ESTABLISHED   1138   Mail
+tcp   192.168.1.254:50439            157.240.7.54:443               ESTABLISHED   37459  WhatsApp Helper
+tcp   192.168.1.254:55441            40.100.29.226:443              ESTABLISHED   1138   Mail
+udp   0.0.0.0:0                      -                              NONE          38203  bluetoothaudiod
+tcp   192.168.1.254:52974            162.159.134.234:443            ESTABLISHED   38074  Discord Helper
+tcp   192.168.1.254:52474            74.125.200.108:993             ESTABLISHED   1138   Mail
+tcp   192.168.1.254:59966            52.0.218.127:443               CLOSE         36604  firefox
+tcp   192.168.1.254:55439            52.98.71.50:443                ESTABLISHED   1138   Mail
+tcp6  fe80:a::406:473c:6cca:c6a7:50131 fe80:a::1c3c:734c:80c1:1166:63171 ESTABLISHED   224    usbmuxd
+tcp   192.168.1.254:52771            91.108.56.187:443              ESTABLISHED   37717  Telegram
+tcp   192.168.1.254:55440            52.98.71.50:443                ESTABLISHED   1138   Mail
+tcp   192.168.1.254:52978            35.186.224.47:443              ESTABLISHED   38074  Discord Helper

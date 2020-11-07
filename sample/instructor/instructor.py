@@ -24,23 +24,88 @@ SECRET_KEY = b'0123456789ABCDEF'
 # Temporary menu, will change if needed
 menu = """
 1. Upload quiz
-2. Choose default quiz
-3. Check flagged students
-4. Print list of students' streams
-5. Download student's stream
-6. Exit
+2. Check flagged students
+3. Print list of students' streams
+4. Download student's stream
+5. Exit
 """
 
 # logging tags
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
+MSG_LEN = 2048000
+
+def main():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
+    s.connect(ADDR)
+    print("connected to server")
+
+    quiz_script = " "
+    quiz_file = " "
+    choice = 0
+    while choice != 5:
+        print(menu)
+        choicestr = input("Input: ")
+        try:
+            choice = int(choicestr)
+        except ValueError:
+            print(f"{ERROR_TAG}, invalid format")
+            continue
+        if choice < 5:
+            Header = (f"!INS|{MSG_LEN}")
+            send_data(s, SECRET_KEY, Header)
+            message = recv_data(s, SECRET_KEY, int(MSG_LEN))
+            if choice == 1:
+                # replace with your own code
+                print("Uploading quiz, Choose default quiz")
+                quiz_script = input('key in the name of the quiz->')
+
+                try:
+                    d = os.getcwd()
+                    d1 = os.path.join(d, "instructor_files")
+                    fname_quiz = os.path.join(d1, f"{quiz_script}.txt")
+                    with open(fname_quiz, 'rt') as file:
+                        for lines in file:
+                            quiz_file = quiz_file + lines
+                    print(f"{INFO_TAG} successfully chosen {quiz_script}.txt")
+                except FileNotFoundError:
+                    print(f"{ERROR_TAG} enter a valid filename...")
+                    continue
+
+                data = (f"PUSH|{quiz_file}")
+                send_data(s, SECRET_KEY, data)
+                message = recv_data(s, SECRET_KEY, MSG_LEN)
+                print(f"{INFO_TAG} successfully uploaded quiz")
+
+            elif choice == 2:
+                # replace with your own code
+                print("Check flagged students")
+            elif choice == 3:
+                # replace with your own code
+                print("Print list of students' streams")
+            elif choice == 4:
+                # replace with your own code
+                print("Download student's stream")
+
+        elif choice == 5:
+            print("Exiting...")
+            #send exit command to server
+            Header = (f"!END|{MSG_LEN}")
+            send_data(s, SECRET_KEY, Header)
+
+        else:
+            print("{} Invalid input".format(ERROR_TAG))
+
+    print("closing instructor program")
+    s.close()
+
 #padding to make the message in multiples of 16
 def padding(message):
     length = 16 - (len(message) % 16)
     message = message.encode()
     message += bytes([length])*length
-    print(f"padding: {message}")
+    # print(f"padding: {message}")
     return message
 
 #decrypt the message
@@ -59,7 +124,7 @@ def encrypt_data(data, key):
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = base64.b64encode(iv + cipher.encrypt(data))
-    print(f"sending encrypted data: {encoded}")
+    # print(f"sending encrypted data: {encoded}")
     return encoded
 
 #pad the data, encrypt and send
@@ -76,57 +141,6 @@ def recv_data(socket, secret_key, len):
     message = message[:-message[-1]]    #remove padding
     message = message.decode(FORMAT)    #to remove b' '
     return message
-
-def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
-    s.connect(ADDR)
-    print("connected to server")
-
-    quiz_script = " "
-    choice = 0
-    while choice != 6:
-        print(menu)
-        choicestr = input("Input: ")
-        try:
-            choice = int(choicestr)
-        except ValueError:
-            print("{} Invalid input".format(ERROR_TAG))
-        if choice == 1:
-            # replace with your own code
-            print("Upload quiz")
-            quiz_file = " "
-            try:
-                with open(f'{quiz_script}.txt', 'rt') as file:
-                    for lines in file:
-                        quiz_file = quiz_file + lines
-            except FileNotFoundError:
-                print(f"{ERROR_TAG}, enter a valid filename...")
-
-            data = (f"!INS|{quiz_file}")
-            send_data(s, SECRET_KEY, quiz_file)
-            message = recv_data(s, SECRET_KEY, 2048000)
-
-        elif choice == 2:
-            # replace with your own code
-            print("Choose default quiz")
-            quiz_script = input('key in the name of the quiz->')
-
-        elif choice == 3:
-            # replace with your own code
-            print("Check flagged students")
-        elif choice == 4:
-            # replace with your own code
-            print("Print list of students' streams")
-        elif choice == 5:
-            # replace with your own code
-            print("Download student's stream")
-        elif choice == 6:
-            print("Exiting...")
-        else:
-            print("{} Invalid input".format(ERROR_TAG))
-
-    print("closing instructor program")
-    s.close()
 
 if __name__ == "__main__":
     main()
