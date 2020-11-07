@@ -22,10 +22,10 @@ FORMAT = 'utf-8'
 SECRET_KEY = b'0123456789ABCDEF'
 
 choices = """choices (enter the number):
-1) GET
-2) PUSH
-3) SSTREAM
-4) END
+1. Download the quiz
+2. Submit quiz and log files
+3. SSTREAM
+4. Exit
 """
 
 # logging tags
@@ -68,7 +68,7 @@ def client_program():
                     # print(message)  #this should be the test script
                     try:
                         d = os.getcwd()
-                        d1 = os.path.join(d, "files_to_submit")
+                        d1 = os.path.join(d, "student_files")
                         fname_quiz = os.path.join(d1, "quiz.txt")
                         file = open(fname_quiz, 'w')
                         file.write(message)
@@ -85,7 +85,7 @@ def client_program():
                     log_file = " "
 
                     d = os.getcwd()
-                    d1 = os.path.join(d, "files_to_submit")
+                    d1 = os.path.join(d, "student_files")
                     fname_ans = os.path.join(d1, f"{answer_script}.txt")
                     fname_logs = os.path.join(d1, f"studentId.log")
 
@@ -176,10 +176,11 @@ def recv_data(socket, secret_key, len):
 
 def main():
     # Client script for testing
-    client_thread = threading.Thread(target=client_program, args=())
-    print("starting client thread...")
-    client_thread.start()
-    client_thread.join()
+    # client_thread = threading.Thread(target=client_program, args=())
+    # print("starting client thread...")
+    # client_thread.start()
+    # client_thread.join()
+    client_program()
 
     print("done!!")
 

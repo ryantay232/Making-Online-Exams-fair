@@ -19,11 +19,11 @@ def end_stream(msg):
 
 
 def push_script(answer_file, log_file):
-    return ComdResult("PUSH", answer_file, log_file)
+    return ComdResult("PUSH_ANSWER", answer_file, log_file)
 
 
 def get_quiz():
-    return ComdResult("GET")
+    return ComdResult("GET_QUIZ")
 
 
 # Handle commands from clients

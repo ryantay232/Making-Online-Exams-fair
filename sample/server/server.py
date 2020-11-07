@@ -57,12 +57,13 @@ def handle_result(comdres, conn, addr):
     elif comd == "GETSTREAM":
         data = json.dumps(list_of_streams).encode(FORMAT)
         send_data(conn, SECRET_KEY, data)
-    elif comd == "GET":
+    elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
-        fname_quiz = os.path.join(d1, f"quiz.txt")
+        d2 = os.path.join(d1, "quiz_file")
+        fname_quiz = os.path.join(d2, f"quiz.txt")
 
         quiz_file = " "
         try:
@@ -73,15 +74,15 @@ def handle_result(comdres, conn, addr):
             print(f"{ERROR_TAG}, quiz file not found in directory...")
         send_data(conn, SECRET_KEY, quiz_file)
 
-    elif comd == "PUSH":
+    elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
-        print("saving student script")
         print("saving students answer scripts")
 
         d = os.getcwd()
-        d1 = os.path.join(d, "received_files")
-        fname_ans = os.path.join(d1, f"{addr}_answer.txt")
-        fname_logs = os.path.join(d1, f"{addr}_logs.txt")
+        d1 = os.path.join(d, "server_files")
+        d2 = os.path.join(d1, "student_answer_scripts")
+        fname_ans = os.path.join(d2, f"{addr}_answer.txt")
+        fname_logs = os.path.join(d2, f"{addr}_logs.txt")
 
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
@@ -93,6 +94,20 @@ def handle_result(comdres, conn, addr):
         f1.close()
         send_data(conn, SECRET_KEY, ' ')
 
+    elif comd == "PUSH_QUIZ":
+        #send quiz to server
+        print("saving quiz to server")
+        d = os.getcwd()
+        d1 = os.path.join(d, "server_files")
+        d2 = os.path.join(d1, "quiz_file")
+        fname_quiz = os.path.join(d2, f"quiz.txt")
+
+        f= open(fname_quiz, 'w')
+
+        f.write(res)
+
+        f.close()
+        send_data(conn,SECRET_KEY,' ')
     else:
         print("{} Error in command".format(ERROR_TAG))
 
@@ -123,13 +138,16 @@ def handle_client(conn, addr):
             elif header == INST_MSG:
                 # Instructor side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
+                # d1, d2 = str(data).split('|')
+                # print(d1)
+                # print(d2)
                 send_data(conn, SECRET_KEY, ' ')
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
             else:
                 print("{} Invalid header".format(ERROR_TAG))
 
-        except (socket.error, KeyboardInterrupt, Exception):
+        except (socket.error, KeyboardInterrupt):
             #reconnecting to client
             print(f"error, connection lost for thread {threading.get_ident()}")
             conn.close()
