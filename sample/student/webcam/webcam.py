@@ -39,8 +39,6 @@ def test_webcam(webcam):
 
 # Stream webcam to server
 def stream_webcam(student_id, webcam, HOST):
-    # my own rtmp server. will change to project's server once its created
-    HOST = '35.185.186.41'
     # ffmpeg -f dshow -s 640x480 -framerate 30 -i video=<webcam> -vcodec libx264
     # -preset ultrafast -tune zerolatency -f flv rtmp://<server>/live/<student_id>
     obj = run([
@@ -53,20 +51,14 @@ def stream_webcam(student_id, webcam, HOST):
 
 
 # Tell server that stream is starting
-def start_stream(student_id, HOST, PORT):
-    s = socket.socket()
-    s.connect((HOST, PORT))
+def start_stream(student_id):
     msg = "SSTREAM|{}".format(student_id)
-    to_send = "!STU|{:08d}|{}!END".format(len(msg), msg)
-    s.send(str.encode(to_send))
-    s.close()
+    to_send = "!STU|{}".format(msg)
+    return to_send
 
 
 # Tell server that stream is ending
-def end_stream(student_id, HOST, PORT):
-    s = socket.socket()
-    s.connect((HOST, PORT))
+def end_stream(student_id):
     msg = "ESTREAM|{}".format(student_id)
-    to_send = "!STU|{:08d}|{}!END".format(len(msg), msg)
-    s.send(str.encode(to_send))
-    s.close()
+    to_send = "!STU|{}".format(msg)
+    return to_send

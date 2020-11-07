@@ -55,7 +55,8 @@ def handle_result(comdres, conn, addr):
     elif comd == "ESTREAM":
         del list_of_streams[res]
     elif comd == "GETSTREAM":
-        s.send(json.dumps(list_of_streams).encode(FORMAT))
+        data = json.dumps(list_of_streams).encode(FORMAT)
+        send_data(conn, SECRET_KEY, data)
     elif comd == "GET":
         #send quiz to students
         print("sending student the quiz")
