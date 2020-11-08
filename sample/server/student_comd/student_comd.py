@@ -12,8 +12,8 @@ def get_streamlink(msg):
     server_ip = socket.gethostbyname(socket.gethostname())
     return ComdResult("SSTREAM", "rtmp://{}/{}".format(server_ip, msg))
 
-def push_script(answer_file, log_file):
-    return ComdResult("PUSH_ANSWER", answer_file, log_file)
+def push_script(answer_file, log_file, json_file):
+    return ComdResult("PUSH_ANSWER", answer_file, log_file, json_file)
 
 def get_quiz():
     return ComdResult("GET_QUIZ")
@@ -26,13 +26,14 @@ def handle_command(addr, msg):
     comd = msg_list[0]
     data = msg_list[1]
     data1 = msg_list[2]
+    data2 = msg_list[3]
     res = None
 
     if comd == "SSTREAM":
         res = get_streamlink(data)
     elif comd == "PUSH":
         #submit answer to server
-        res = push_script(data, data1)
+        res = push_script(data, data1, data2)
     elif comd == "GET":
         #get the script from server
         res = get_quiz()

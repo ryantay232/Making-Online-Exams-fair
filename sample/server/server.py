@@ -47,6 +47,7 @@ def handle_result(comdres, conn, addr):
     comd = comdres.comd
     res = comdres.res
     res1 = comdres.res1
+    res2 = comdres.res2
     if comd == "SSTREAM":
         list_of_streams.append(res)
     elif comd == "GET_QUIZ":
@@ -75,15 +76,20 @@ def handle_result(comdres, conn, addr):
         d2 = os.path.join(d1, "student_answer_scripts")
         fname_ans = os.path.join(d2, f"{addr}_answer.txt")
         fname_logs = os.path.join(d2, f"{addr}_logs.txt")
+        fname_json = os.path.join(d2, f"{addr}_json.txt")
 
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
+        f2 = open(fname_json, 'w')
 
         f.write(res)
         f1.write(res1)
+        f2.write(res2)
 
         f.close()
         f1.close()
+        f2.close()
+        
         send_data(conn, SECRET_KEY, ' ')
 
     elif comd == "PUSH_QUIZ":

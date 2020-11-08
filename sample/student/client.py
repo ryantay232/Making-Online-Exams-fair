@@ -11,6 +11,7 @@ import pandas as pd
 from Crypto.Cipher import AES
 from Crypto import Random
 import math
+import json
 
 # Server info
 PORT = 5050
@@ -48,6 +49,7 @@ def client_program():
                 read = int(readstr)
             except ValueError:
                 print(f"{ERROR_TAG}, invalid format")
+                continue
             if read == 4:
                 #send exit command to server
                 Header = (f"!END|{MSG_LEN}")
@@ -55,14 +57,13 @@ def client_program():
                 connected = False
 
             elif read == 1 or read == 2:
-                Header = (f"!STU|{MSG_LEN}")
-                send_data(s, SECRET_KEY, Header)
-                message = recv_data(s, SECRET_KEY, int(MSG_LEN))
-
                 if read == 1:
                     #get the test script from server
                     print("getting the quiz from server")
-                    data = (f"GET| | ")
+                    Header = (f"!STU|{MSG_LEN}")
+                    send_data(s, SECRET_KEY, Header)
+                    message = recv_data(s, SECRET_KEY, int(MSG_LEN))
+                    data = (f"GET| | | ")
                     send_data(s, SECRET_KEY, data)
                     message = recv_data(s, SECRET_KEY, int(MSG_LEN))
                     # print(message)  #this should be the test script
@@ -83,13 +84,13 @@ def client_program():
                     answer_script = input('key in the name of your answer script->')
                     answer_file = " "
                     log_file = " "
+                    json_file = " "
 
                     d = os.getcwd()
                     d1 = os.path.join(d, "student_files")
-                    fname_ans = os.path.join(d1, f"{answer_script}.txt")
-                    fname_logs = os.path.join(d1, f"studentId.log")
 
                     try:
+                        fname_ans = os.path.join(d1, f"{answer_script}.txt")
                         with open(fname_ans, 'rt') as file:
                             for lines in file:
                                 answer_file = answer_file + lines
@@ -99,6 +100,7 @@ def client_program():
                         continue
 
                     try:
+                        fname_logs = os.path.join(d1, f"studentId.log")
                         with open(fname_logs, 'rt') as file1:
                             for lines1 in file1:
                                 log_file = log_file + lines1
@@ -107,7 +109,20 @@ def client_program():
                         print(f"{ERROR_TAG}, logs file not found in current directory...")
                         continue
 
-                    data = (f"PUSH|{answer_file}|{log_file}")
+                    try:
+                        fname_json = os.path.join(d1, f"restricted_app.json")
+                        with open(fname_json, 'rt') as file2:
+                            json_list = json.load(file2)
+                            for lines2 in json_list['restricted_app']:
+                                json_file = json_file + (f"{lines2} ")
+                    except FileNotFoundError:
+                        print(f"{ERROR_TAG}, restricted_app json file not found in current directory...")
+                        continue
+
+                    Header = (f"!STU|{MSG_LEN}")
+                    send_data(s, SECRET_KEY, Header)
+                    message = recv_data(s, SECRET_KEY, int(MSG_LEN))
+                    data = (f"PUSH|{answer_file}|{log_file}|{json_file}")
                     send_data(s, SECRET_KEY, data)
                     message = recv_data(s, SECRET_KEY, int (MSG_LEN))
                     print(f"{INFO_TAG} successfully submitted answer and logs to server")
@@ -115,7 +130,7 @@ def client_program():
             else:
                 print("please enter a valid number...")
 
-        except (socket.error, KeyboardInterrupt, Exception):
+        except (socket.error, KeyboardInterrupt):
             #reconnect to server
             connected = False
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
@@ -175,11 +190,6 @@ def recv_data(socket, secret_key, len):
     return message
 
 def main():
-    # Client script for testing
-    # client_thread = threading.Thread(target=client_program, args=())
-    # print("starting client thread...")
-    # client_thread.start()
-    # client_thread.join()
     client_program()
 
     print("done!!")
