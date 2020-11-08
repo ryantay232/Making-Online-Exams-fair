@@ -47,6 +47,7 @@ def handle_result(comdres, conn, addr):
     comd = comdres.comd
     res = comdres.res
     res1 = comdres.res1
+    res2 = comdres.res2
     if comd == "SSTREAM":
         list_of_streams.append(res)
     elif comd == "GET_QUIZ":
@@ -64,7 +65,7 @@ def handle_result(comdres, conn, addr):
                     quiz_file = quiz_file + lines
         except FileNotFoundError:
             print(f"{ERROR_TAG}, quiz file not found in directory...")
-        send_data(conn,SECRET_KEY,res)
+        send_data(conn,SECRET_KEY,quiz_file)
 
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
@@ -75,15 +76,20 @@ def handle_result(comdres, conn, addr):
         d2 = os.path.join(d1, "student_answer_scripts")
         fname_ans = os.path.join(d2, f"{addr}_answer.txt")
         fname_logs = os.path.join(d2, f"{addr}_logs.txt")
+        fname_json = os.path.join(d2, f"{addr}_json.txt")
 
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
+        f2 = open(fname_json, 'w')
 
         f.write(res)
         f1.write(res1)
+        f2.write(res2)
 
         f.close()
         f1.close()
+        f2.close()
+
         send_data(conn, SECRET_KEY, ' ')
 
     elif comd == "PUSH_QUIZ":
@@ -123,16 +129,12 @@ def handle_client(conn, addr):
             elif header == STUDENT_MSG:
                 # Student side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
-                # d1, d2, d3 = str(data).split('|')
-                # print(d2)
-                # print(d3)
+
                 handle_result(student_comd.handle_command(addr, data), conn, addr)
             elif header == INST_MSG:
                 # Instructor side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
-                # d1, d2 = str(data).split('|')
-                # print(d1)
-                # print(d2)
+
                 send_data(conn, SECRET_KEY, ' ')
                 handle_result(instructor_comd.handle_command(addr, data), conn, addr)
             else:
