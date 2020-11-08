@@ -1,5 +1,4 @@
 *.vscode
 *.pyc
 *.log
-*sutdentId_access.json
 *.txt
