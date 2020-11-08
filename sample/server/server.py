@@ -1,25 +1,23 @@
+import json
 import os
-import sys
-import random
-import time
 import socket
+import sys
 import threading
-from datetime import datetime
-import base64
-import numpy as np
-import pandas as pd
-from Crypto.Cipher import AES
-from Crypto import Random
-import math
+import time
+from os import listdir
+from os.path import getsize, isfile, join
+from subprocess import run
 
 import sample.server.comdresult as ComdResult
-import sample.server.student_comd.student_comd as student_comd
 import sample.server.instructor_comd.instructor_comd as instructor_comd
+import sample.server.student_comd.student_comd as student_comd
 
 # Server info
 HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
+PUBLIC_IP = run("curl https://ipecho.net/plain".split(),
+                capture_output=True).stdout.decode()
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
@@ -37,12 +35,14 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
 # Global vars
-list_of_streams = []
+recordings_path = '/var/www/html/recordings'
+list_of_streams = {}
 
 #secret key to encrypt/decrypt eg.
 SECRET_KEY = b'0123456789ABCDEF'
 
 MSG_LEN = 2048000
+
 
 # Handle result that changes global vars from requests
 def handle_result(comdres, conn, addr):
@@ -50,8 +50,35 @@ def handle_result(comdres, conn, addr):
     res = comdres.res
     res1 = comdres.res1
     res2 = comdres.res2
+    res3 = comdres.res3
     if comd == "SSTREAM":
-        list_of_streams.append(res)
+        list_of_streams[res] = res1
+    elif comd == "ESTREAM":
+        del list_of_streams[res]
+    elif comd == "GETSTREAM":
+        data = json.dumps(list_of_streams).encode(FORMAT)
+        conn.send(data)
+    elif comd == "GETRECORD":
+        files = str([
+            f for f in listdir(recordings_path)
+            if isfile(join(recordings_path, f))
+        ]).encode()
+        conn.send(files)
+    elif comd == "DLRECORD":
+        files = [
+            f for f in listdir(recordings_path)
+            if isfile(join(recordings_path, f))
+        ]
+        filename = "{}/{}".format(recordings_path, files[int(res) - 1])
+        filesize = getsize(filename)
+        msg = "{}|{}".format(filename, filesize).encode(FORMAT)
+        conn.send(msg)
+        with open(filename, "rb") as f:
+            bytes_read = f.read(4096)
+            while (bytes_read):
+                conn.send(bytes_read)
+                bytes_read = f.read(4096)
+        print("{} File {} transfer complete".format(INFO_TAG, filename))
     elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")
@@ -73,21 +100,21 @@ def handle_result(comdres, conn, addr):
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
         print("saving students answer scripts")
-
+        print("student_id: {}".format(res))
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "student_answer_scripts")
-        fname_ans = os.path.join(d2, f"{addr}_answer.txt")
-        fname_logs = os.path.join(d2, f"{addr}_logs.txt")
-        fname_json = os.path.join(d2, f"{addr}_json.txt")
+        fname_ans = os.path.join(d2, f"{res}_answer.txt")
+        fname_logs = os.path.join(d2, f"{res}_logs.txt")
+        fname_json = os.path.join(d2, f"{res}_json.txt")
 
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
         f2 = open(fname_json, 'w')
 
-        f.write(res)
-        f1.write(res1)
-        f2.write(res2)
+        f.write(res1)
+        f1.write(res2)
+        f2.write(res3)
 
         f.close()
         f1.close()
@@ -103,7 +130,7 @@ def handle_result(comdres, conn, addr):
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
 
-        f= open(fname_quiz, 'w')
+        f = open(fname_quiz, 'w')
 
         f.write(res)
 
@@ -111,7 +138,6 @@ def handle_result(comdres, conn, addr):
         conn.send(b' ')
     else:
         print("{} Error in command".format(ERROR_TAG))
-    print(list_of_streams)
 
 
 # Handle requests from clients
@@ -127,29 +153,30 @@ def handle_client(conn, addr):
             # From here onwards handle requests from clients
             if header == END_MSG:
                 print("{} Ending connection with {}".format(INFO_TAG, addr))
-                print(header)
                 connected = False
             elif header == STUDENT_MSG:
                 # Student side
-                data = conn.recv(MSG_LEN).decode()  #wait to receive message
+                data = conn.recv(
+                    int(msg_len)).decode()  #wait to receive message
 
-                handle_result(student_comd.handle_command(addr, data), conn, addr)
+                handle_result(student_comd.handle_command(addr, data), conn,
+                              addr)
             elif header == INST_MSG:
                 # Instructor side
                 data = conn.recv(MSG_LEN).decode()  #wait to receive message
-                conn.send(b' ')
-                handle_result(instructor_comd.handle_command(addr, data), conn, addr)
+                #conn.send(b' ')
+                handle_result(instructor_comd.handle_command(addr, data), conn,
+                              addr)
             else:
                 print("{} Invalid header".format(ERROR_TAG))
 
         except (socket.error, KeyboardInterrupt):
-            print("client disconnected...")
+            print("{} Client disconnected...".format(ERROR_TAG))
             connected = False
             conn.close()
-
         time.sleep(0.01)
-
     conn.close()
+
 
 # Start listening for clients
 def start_server():
@@ -160,8 +187,10 @@ def start_server():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print("{} Active connections: {}".format(INFO_TAG, threading.activeCount() - 1))
+        print("{} Active connections: {}".format(INFO_TAG,
+                                                 threading.activeCount() - 1))
         time.sleep(0.01)
+
 
 def main():
     print("{} Server starting...".format(INFO_TAG))
