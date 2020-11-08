@@ -7,12 +7,9 @@ import socket
 import sys
 import threading
 import time
+from os import listdir
+from os.path import isfile, join, getsize
 from datetime import datetime
-
-import numpy as np
-import pandas as pd
-from Crypto import Random
-from Crypto.Cipher import AES
 
 import sample.server.comdresult as ComdResult
 import sample.server.instructor_comd.instructor_comd as instructor_comd
@@ -60,9 +57,15 @@ def handle_result(comdres, conn, addr):
     elif comd == "ESTREAM":
         del list_of_streams[res]
     elif comd == "GETSTREAM":
-        conn.recv(MSG_LEN)
         data = json.dumps(list_of_streams).encode(FORMAT)
         conn.send(data)
+    elif comd == "GETRECORD":
+        recordings_path = '/var/www/html/recordings'
+        files = str([
+            f for f in listdir(recordings_path)
+            if isfile(join(recordings_path, f))
+        ]).encode()
+        conn.send(files)
     elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")
@@ -147,9 +150,8 @@ def handle_client(conn, addr):
                               addr)
             elif header == INST_MSG:
                 # Instructor side
-                data = conn.recv(
-                    int(msg_len)).decode()  #wait to receive message
-                conn.send(b' ')
+                data = conn.recv(MSG_LEN).decode()  #wait to receive message
+                #conn.send(b' ')
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
             else:

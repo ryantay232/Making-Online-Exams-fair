@@ -16,7 +16,7 @@ from Crypto.Cipher import AES
 
 # Server info
 PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = '35.198.237.249'  #socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
@@ -113,13 +113,11 @@ def main():
 
 # Get list of student streams (will move to own file)
 def print_streams(s):
-    to_send = "!INS|{}".format(MSG_LEN).encode()
+    to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
     s.send(to_send)
-    reply = s.recv(MSG_LEN).decode(FORMAT)
+    s.recv(MSG_LEN)
     msg = "GETSTREAM".encode()
     s.send(msg)
-    reply = s.recv(MSG_LEN)
-    s.send(b' ')
     reply = s.recv(MSG_LEN).decode(FORMAT)
     streams_dict = json.loads(reply)
     if len(streams_dict) == 0:
@@ -128,6 +126,22 @@ def print_streams(s):
         print("Student Id   Stream Link")
         for key in list(streams_dict.keys()):
             print("{: <13}{}".format(key, streams_dict[key]))
+
+
+# Get list of recordings
+def get_list_of_recordings(s):
+    to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
+    s.send(to_send)
+    s.recv(MSG_LEN)
+    msg = "GETRECORD".encode()
+    s.send(msg)
+    reply = s.recv(MSG_LEN).decode(FORMAT)
+    recordings_list = list(reply)
+
+
+# Send file
+def receive_file(s):
+    path = "instructor_files/streams"
 
 
 if __name__ == "__main__":

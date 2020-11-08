@@ -14,8 +14,7 @@ import sample.student.webcam.webcam as webcam
 
 # Server info
 PORT = 5050
-SERVER = socket.gethostbyname(socket.gethostname(
-))  #'35.198.237.249'  # socket.gethostbyname(socket.gethostname())
+SERVER = '35.198.237.249'  # socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
