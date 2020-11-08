@@ -51,8 +51,8 @@ def stream_webcam(student_id, webcam, HOST):
 
 
 # Tell server that stream is starting
-def start_stream(student_id):
-    msg = "SSTREAM|{}".format(student_id)
+def start_stream(student_id, server):
+    msg = "SSTREAM|{0}|rtmp://{1}/live/{0}".format(student_id, server)
     return msg
 
 

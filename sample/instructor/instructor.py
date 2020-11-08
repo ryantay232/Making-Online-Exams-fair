@@ -1,13 +1,8 @@
-import base64
 import json
-import math
 import os
-import random
 import socket
 import sys
 import threading
-import time
-from datetime import datetime
 
 import tqdm
 
@@ -167,7 +162,7 @@ def download_stream(s):
                          unit_scale=True,
                          unit_divisor=1024)
     bytes_received = 0
-    recording_filepath = "{}/{}".format(recordings_path, filename)
+    recording_filepath = "./{}/{}".format(recordings_path, filename)
     with open(recording_filepath, "wb") as f:
         for _ in progress:
             if bytes_received >= filesize:

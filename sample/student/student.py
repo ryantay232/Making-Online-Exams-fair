@@ -1,13 +1,9 @@
-import base64
-import math
+import json
 import os
-import random
 import socket
 import sys
 import threading
 import time
-import json
-from datetime import datetime
 from multiprocessing import Process
 
 import sample.student.webcam.webcam as webcam

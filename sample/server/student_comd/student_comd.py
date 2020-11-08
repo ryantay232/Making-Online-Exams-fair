@@ -1,5 +1,3 @@
-import socket
-
 from sample.server.comdresult import ComdResult
 
 # logging tags
@@ -8,10 +6,9 @@ ERROR_TAG = '[ERROR]'
 
 
 # Given streamkey return stream link
-def get_streamlink(msg):
-    server_ip = socket.gethostbyname(socket.gethostname())
-    return ComdResult("SSTREAM",
-                      (msg, "rtmp://{}/live/{}".format(server_ip, msg)))
+def get_streamlink(student_id, streamlink):
+    #server_ip = socket.gethostbyname(socket.gethostname())
+    return ComdResult("SSTREAM", student_id, streamlink)
 
 
 def end_stream(msg):
@@ -36,8 +33,8 @@ def handle_command(addr, msg):
     res = None
 
     if comd == "SSTREAM":
-        data = msg_list[1]
-        res = get_streamlink(data)
+        #data = msg_list[1]
+        res = get_streamlink(msg_list[1], msg_list[2])
     elif comd == "ESTREAM":
         data = msg_list[1]
         res = end_stream(data)

@@ -1,15 +1,12 @@
-import base64
 import json
-import math
 import os
-import random
 import socket
 import sys
 import threading
 import time
 from os import listdir
-from os.path import isfile, join, getsize
-from datetime import datetime
+from os.path import getsize, isfile, join
+from subprocess import run
 
 import sample.server.comdresult as ComdResult
 import sample.server.instructor_comd.instructor_comd as instructor_comd
@@ -19,6 +16,7 @@ import sample.server.student_comd.student_comd as student_comd
 HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
+PUBLIC_IP = run("curl https://ipecho.net/plain".split()).stdout.decode()
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
