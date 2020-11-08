@@ -16,7 +16,8 @@ import sample.server.student_comd.student_comd as student_comd
 HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
-PUBLIC_IP = run("curl https://ipecho.net/plain".split()).stdout.decode()
+PUBLIC_IP = run("curl https://ipecho.net/plain".split(),
+                capture_output=True).stdout.decode()
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
@@ -51,8 +52,7 @@ def handle_result(comdres, conn, addr):
     res2 = comdres.res2
     res3 = comdres.res3
     if comd == "SSTREAM":
-        student_id = res[0]
-        list_of_streams[res[0]] = res[1]
+        list_of_streams[res] = res1
     elif comd == "ESTREAM":
         del list_of_streams[res]
     elif comd == "GETSTREAM":

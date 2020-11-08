@@ -17,8 +17,7 @@ FORMAT = 'utf-8'
 choices = """choices (enter the number):
 1. Download the quiz
 2. Submit quiz and log files
-3. SSTREAM
-4. Exit
+3. Exit
 """
 
 # logging tags
@@ -37,7 +36,7 @@ def quiz_platform(student_id):
     header = (f"!STU|{MSG_LEN}").encode()
     s.send(header)
     message = s.recv(MSG_LEN).decode()
-    msg = webcam.start_stream(student_id).encode()
+    msg = webcam.start_stream(student_id, SERVER).encode()
     s.send(msg)
     connected = True
     while connected:
@@ -48,7 +47,7 @@ def quiz_platform(student_id):
         except ValueError:
             print(f"{ERROR_TAG}, invalid format")
             continue
-        if read == 4:
+        if read == 3:
             # end stream
             msg = webcam.end_stream(student_id).encode()
             header = (f"!STU|{len(msg)}").encode()
@@ -159,20 +158,8 @@ def port_flagging(n):
 
 
 def webcam_streaming(student_id, student_webcam):
-    #print("webcam = {}".format(webcam))
     print("{} Streaming webcam...".format(INFO_TAG))
-    #webcam.stream_webcam(student_id, student_webcam, SERVER)
-
-
-def run_in_parallel(funcs, args):
-    proc = []
-    for i in range(len(funcs)):
-        p = Process(target=funcs[i], args=args[i])
-        p.start()
-        proc.append(p)
-    quiz_platform()
-    for p in proc:
-        p.join()
+    webcam.stream_webcam(student_id, student_webcam, SERVER)
 
 
 def client_program():
@@ -209,18 +196,11 @@ def client_program():
     quiz_platform(student_id)
     for p in proc:
         p.join()
-    #run_in_parallel(funcs, args)
 
 
 def main():
-    # Client script for testing
-    #client_thread = threading.Thread(target=client_program, args=())
     print("starting client thread...")
     client_program()
-    #client_thread.start()
-    #client_thread.join()
-
-    print("done!!")
 
 
 if __name__ == "__main__":
