@@ -71,9 +71,9 @@ def handle_result(comdres, conn, addr):
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]
-        filename = "{}/{}".format(recordings_path, files[int(res - 1)])
+        filename = "{}/{}".format(recordings_path, files[int(res) - 1])
         filesize = getsize(filename)
-        msg = "{}|{}".format(filename, filesize)
+        msg = "{}|{}".format(filename, filesize).encode(FORMAT)
         conn.send(msg)
         with open(filename, "rb") as f:
             bytes_read = f.read(4096)

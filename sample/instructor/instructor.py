@@ -91,13 +91,11 @@ def main():
                 # replace with your own code
                 print("Check flagged students")
             elif choice == 3:
-                # replace with your own code
                 print_streams(s)
             elif choice == 4:
-                # replace with your own code
                 get_list_of_recordings(s)
             elif choice == 5:
-                print("Download student's stream")
+                download_stream(s)
         elif choice == 6:
             print("Exiting...")
             #send exit command to server
@@ -145,10 +143,10 @@ def get_list_of_recordings(s):
 
 
 # Send file
-def receive_file(s):
+def download_stream(s):
     choice = None
     while choice is None:
-        choicestr = input("Input: ")
+        choicestr = input("Recording no.: ")
         try:
             choice = int(choicestr)
         except ValueError:
