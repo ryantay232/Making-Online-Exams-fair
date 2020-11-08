@@ -65,7 +65,7 @@ def handle_result(comdres, conn, addr):
                     quiz_file = quiz_file + lines
         except FileNotFoundError:
             print(f"{ERROR_TAG}, quiz file not found in directory...")
-        send_data(conn,SECRET_KEY,res)
+        send_data(conn,SECRET_KEY,quiz_file)
 
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
@@ -89,7 +89,7 @@ def handle_result(comdres, conn, addr):
         f.close()
         f1.close()
         f2.close()
-        
+
         send_data(conn, SECRET_KEY, ' ')
 
     elif comd == "PUSH_QUIZ":
@@ -129,16 +129,12 @@ def handle_client(conn, addr):
             elif header == STUDENT_MSG:
                 # Student side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
-                # d1, d2, d3 = str(data).split('|')
-                # print(d2)
-                # print(d3)
+
                 handle_result(student_comd.handle_command(addr, data), conn, addr)
             elif header == INST_MSG:
                 # Instructor side
                 data = recv_data(conn, SECRET_KEY, int(msg_len))
-                # d1, d2 = str(data).split('|')
-                # print(d1)
-                # print(d2)
+
                 send_data(conn, SECRET_KEY, ' ')
                 handle_result(instructor_comd.handle_command(addr, data), conn, addr)
             else:
