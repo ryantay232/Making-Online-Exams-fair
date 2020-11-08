@@ -5,8 +5,9 @@ import shutil
 import json
 
 diffFileName = 'diff.log'
-logFileName = 'studentId.log'
+logFileNamePath = '../../../student_files/studentId.log'
 tempFileName = 'temp.log'
+accessAppFilePath = '../../../student_files/sutdentId_access.json'
 
 def compare(File1,File2):
     with open(File1,'r') as f:
@@ -36,16 +37,16 @@ if __name__ == '__main__':
         with redirect_stdout(f):
             portflaging.main()
 
-    if (os.path.isfile(logFileName) == False):
+    if (os.path.isfile(logFileNamePath) == False):
         original = tempFileName
-        target = logFileName
+        target = logFileNamePath
         shutil.copyfile(original, target)
     else:
-        compare(tempFileName,logFileName)
-        append(logFileName)
+        compare(tempFileName,logFileNamePath)
+        append(logFileNamePath)
 
     #open log file to read if student have access app in the restricted list
-    with open('studentId.log') as l:
+    with open(logFileNamePath) as l:
         logFileContent = l.read()
 
     #load restricted app list
@@ -54,7 +55,7 @@ if __name__ == '__main__':
         appList = jsonObject['restricted_app']
 
     #load the current access app on the json end
-    with open('sutdentId_access.json','r') as access:
+    with open(accessAppFilePath,'r') as access:
         jsonObjectAccess = json.load(access)
         accessApp = set(jsonObjectAccess['app_accessed'])
         for app in appList:  
@@ -63,6 +64,6 @@ if __name__ == '__main__':
         jsonObjectAccess['app_accessed'] = list(accessApp)
     
     #update the app accessed     
-    with open('sutdentId_access.json','w') as access:
+    with open(accessAppFilePath,'w') as access:
         json.dump(jsonObjectAccess,access)
 

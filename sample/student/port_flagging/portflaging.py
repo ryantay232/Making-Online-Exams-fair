@@ -1,16 +1,3 @@
-#duration of the exam
-#Sever to accept log every one min or log it locally 1st then upload.
-#Access list of the restricted app so that it would notified the server?
-#log file
-#
-
-#need sudo to run the script
-
-# run on student end - who will start my script? 
-# do i peridically send log ot the server? or after the exam 
-# flag out on the base on restricted list and send notification on instructor end? 
-
-
 import socket
 from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
 
