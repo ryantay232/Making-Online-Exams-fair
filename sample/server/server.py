@@ -53,13 +53,16 @@ def handle_result(comdres, conn, addr):
     res = comdres.res
     res1 = comdres.res1
     res2 = comdres.res2
+    res3 = comdres.res3
     if comd == "SSTREAM":
+        student_id = res[0]
         list_of_streams[res[0]] = res[1]
     elif comd == "ESTREAM":
         del list_of_streams[res]
     elif comd == "GETSTREAM":
+        conn.recv(MSG_LEN)
         data = json.dumps(list_of_streams).encode(FORMAT)
-        send_data(conn, SECRET_KEY, data)
+        conn.send(data)
     elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")
@@ -81,21 +84,21 @@ def handle_result(comdres, conn, addr):
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
         print("saving students answer scripts")
-
+        print("student_id: {}".format(res))
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "student_answer_scripts")
-        fname_ans = os.path.join(d2, f"{addr}_answer.txt")
-        fname_logs = os.path.join(d2, f"{addr}_logs.txt")
-        fname_json = os.path.join(d2, f"{addr}_json.txt")
+        fname_ans = os.path.join(d2, f"{res}_answer.txt")
+        fname_logs = os.path.join(d2, f"{res}_logs.txt")
+        fname_json = os.path.join(d2, f"{res}_json.txt")
 
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
         f2 = open(fname_json, 'w')
 
-        f.write(res)
-        f1.write(res1)
-        f2.write(res2)
+        f.write(res1)
+        f1.write(res2)
+        f2.write(res3)
 
         f.close()
         f1.close()
@@ -134,17 +137,18 @@ def handle_client(conn, addr):
             # From here onwards handle requests from clients
             if header == END_MSG:
                 print("{} Ending connection with {}".format(INFO_TAG, addr))
-                print(header)
                 connected = False
             elif header == STUDENT_MSG:
                 # Student side
-                data = conn.recv(MSG_LEN).decode()  #wait to receive message
+                data = conn.recv(
+                    int(msg_len)).decode()  #wait to receive message
 
                 handle_result(student_comd.handle_command(addr, data), conn,
                               addr)
             elif header == INST_MSG:
                 # Instructor side
-                data = conn.recv(MSG_LEN).decode()  #wait to receive message
+                data = conn.recv(
+                    int(msg_len)).decode()  #wait to receive message
                 conn.send(b' ')
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
@@ -152,11 +156,10 @@ def handle_client(conn, addr):
                 print("{} Invalid header".format(ERROR_TAG))
 
         except (socket.error, KeyboardInterrupt):
-            print("client disconnected...")
+            print("{} Client disconnected...".format(ERROR_TAG))
             connected = False
             conn.close()
         time.sleep(0.01)
-
     conn.close()
 
 

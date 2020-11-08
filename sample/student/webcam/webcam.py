@@ -53,12 +53,10 @@ def stream_webcam(student_id, webcam, HOST):
 # Tell server that stream is starting
 def start_stream(student_id):
     msg = "SSTREAM|{}".format(student_id)
-    to_send = "!STU|{}".format(msg)
-    return to_send
+    return msg
 
 
 # Tell server that stream is ending
 def end_stream(student_id):
     msg = "ESTREAM|{}".format(student_id)
-    to_send = "!STU|{}".format(msg)
-    return to_send
+    return msg

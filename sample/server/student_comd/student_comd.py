@@ -18,8 +18,9 @@ def end_stream(msg):
     return ComdResult("ESTREAM", msg)
 
 
-def push_script(answer_file, log_file, json_file):
-    return ComdResult("PUSH_ANSWER", answer_file, log_file, json_file)
+def push_script(student_id, answer_file, log_file, json_file):
+    return ComdResult("PUSH_ANSWER", student_id, answer_file, log_file,
+                      json_file)
 
 
 def get_quiz():
@@ -45,7 +46,8 @@ def handle_command(addr, msg):
         data = msg_list[1]
         data1 = msg_list[2]
         data2 = msg_list[3]
-        res = push_script(data, data1, data2)
+        data3 = msg_list[4]
+        res = push_script(data, data1, data2, data3)
     elif comd == "GET":
         #get the script from server
         res = get_quiz()

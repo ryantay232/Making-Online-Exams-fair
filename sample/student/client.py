@@ -35,6 +35,7 @@ ERROR_TAG = '[ERROR]'
 
 MSG_LEN = 2048000
 
+
 def client_program():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
 
@@ -80,7 +81,8 @@ def client_program():
             elif read == 2:
                 # push your answer to server,
                 print("submitting answer script and logs file")
-                answer_script = input('key in the name of your answer script->')
+                answer_script = input(
+                    'key in the name of your answer script->')
                 answer_file = " "
                 log_file = " "
                 json_file = " "
@@ -95,7 +97,9 @@ def client_program():
                             answer_file = answer_file + lines
                     file.close()
                 except FileNotFoundError:
-                    print(f"{ERROR_TAG}, {answer_script} not found in current directory...")
+                    print(
+                        f"{ERROR_TAG}, {answer_script} not found in current directory..."
+                    )
                     continue
 
                 try:
@@ -105,7 +109,9 @@ def client_program():
                             log_file = log_file + lines1
                     file1.close()
                 except FileNotFoundError:
-                    print(f"{ERROR_TAG}, logs file not found in current directory...")
+                    print(
+                        f"{ERROR_TAG}, logs file not found in current directory..."
+                    )
                     continue
 
                 try:
@@ -115,7 +121,9 @@ def client_program():
                         for lines2 in json_list['restricted_app']:
                             json_file = json_file + (f"{lines2} ")
                 except FileNotFoundError:
-                    print(f"{ERROR_TAG}, restricted_app json file not found in current directory...")
+                    print(
+                        f"{ERROR_TAG}, restricted_app json file not found in current directory..."
+                    )
                     continue
 
                 Header = (f"!STU|{MSG_LEN}").encode()
@@ -124,7 +132,9 @@ def client_program():
                 data = (f"PUSH|{answer_file}|{log_file}|{json_file}").encode()
                 s.send(data)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
-                print(f"{INFO_TAG} successfully submitted answer and logs to server")
+                print(
+                    f"{INFO_TAG} successfully submitted answer and logs to server"
+                )
 
             else:
                 print("please enter a valid number...")
@@ -133,10 +143,12 @@ def client_program():
     print("closing client program")
     s.close()
 
+
 def main():
     client_program()
 
     print("done!!")
+
 
 if __name__ == "__main__":
     main()

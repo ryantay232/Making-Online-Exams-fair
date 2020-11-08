@@ -93,7 +93,7 @@ def main():
                 print("Check flagged students")
             elif choice == 3:
                 # replace with your own code
-                print_streams()
+                print_streams(s)
             elif choice == 4:
                 # replace with your own code
                 print("Download student's stream")
@@ -112,15 +112,15 @@ def main():
 
 
 # Get list of student streams (will move to own file)
-def print_streams():
-    s = socket.socket()
-    s.connect((HOST, PORT))
-    msg = "GETSTREAM"
-    to_send = "!INS|{:08d}|{}".format(len(msg), msg)
-    s.send(str.encode(to_send))
-    reply = s.recv(4096).decode(FORMAT)
-    s.send(str.encode("!END"))
-    s.close()
+def print_streams(s):
+    to_send = "!INS|{}".format(MSG_LEN).encode()
+    s.send(to_send)
+    reply = s.recv(MSG_LEN).decode(FORMAT)
+    msg = "GETSTREAM".encode()
+    s.send(msg)
+    reply = s.recv(MSG_LEN)
+    s.send(b' ')
+    reply = s.recv(MSG_LEN).decode(FORMAT)
     streams_dict = json.loads(reply)
     if len(streams_dict) == 0:
         print("{} No streams running now.".format(INFO_TAG))
