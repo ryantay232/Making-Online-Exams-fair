@@ -5,12 +5,14 @@ import time
 import socket
 import threading
 from datetime import datetime
-import base64
+from base64 import b64encode, b64decode
 import numpy as np
 import pandas as pd
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 from Crypto import Random
 import math
+import json
 
 import sample.server.comdresult as ComdResult
 import sample.server.student_comd.student_comd as student_comd
@@ -183,35 +185,56 @@ def padding(message):
     return message
 
 #decrypt the message
-def decrypt_message(message,key):
+def decrypt_message(message, key):
+    try:
+        b64 = json.loads(message)
+        iv = b64decode(b64['iv'])
+        ct = b64decode(b64['ciphertext'])
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        pt = unpad(cipher.decrypt(ct), AES.block_size)
+        return pt
+    except (ValueError, KeyError) as e:
+        print("{} Incorrect decryption".format(ERROR_TAG))
+    '''
     #print("decrpyting message")
     decoded_message = base64.b64decode(message)
     iv = decoded_message[:16]
     cipher = AES.new(key, AES.MODE_CBC, iv)
     decrypted_message = cipher.decrypt(decoded_message[16:])
+    #print(f"{decrypt_message}")
     return decrypted_message
+    '''
 
 #encrypt the message
 def encrypt_data(data, key):
     #print("\t\tencrypting data")
+    cipher = AES.new(key, AES.MODE_CBC)
+    ct_bytes = cipher.encrypt(pad(data, AES.block_size))
+    iv = b64encode(cipher.iv).decode(FORMAT)
+    ct = b64encode(ct_bytes).decode(FORMAT)
+    res = json.dumps({'iv':iv, 'ciphertext':ct})
+    return res
+    '''
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = base64.b64encode(iv + cipher.encrypt(data))
-    # print(f"sending encrypted data: {encoded}")
+    #print(f"sending encrypted data: {encoded}")
     return encoded
+    '''
 
 #pad the data, encrypt and send
 def send_data(socket, secret_key, data):
-    data = padding(data)
-    data = encrypt_data(data,secret_key)
-    socket.send(data)
+    #data = padding(data)
+    data = encrypt_data(data.encode(), secret_key)
+    socket.send(data.encode())
     # print("sent data\n")
 
 #receive message from client decrypt, unpad and decode
 def recv_data(socket, secret_key, len):
     message = socket.recv(len).decode()  #wait to receive message
-    message = decrypt_message(message,secret_key)
-    message = message[:-message[-1]]    #remove padding
+    message = decrypt_message(message, secret_key)
+    #print("message"+message)
+    #message = message[:-message[-1]]    #remove padding
     message = message.decode(FORMAT)    #to remove b' '
     return message
 
