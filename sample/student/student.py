@@ -159,7 +159,8 @@ def port_flagging(n):
 
 def webcam_streaming(student_id, student_webcam):
     print("{} Streaming webcam...".format(INFO_TAG))
-    webcam.stream_webcam(student_id, student_webcam, SERVER)
+    child_process = webcam.stream_webcam(student_id, student_webcam, SERVER)
+    return child_process
 
 
 def client_program():
@@ -182,11 +183,10 @@ def client_program():
         if not isWorking:
             student_webcam = None
 
-    funcs = [port_flagging, webcam_streaming]
-    args = [(100, ), (
-        student_id,
-        student_webcam,
-    )]
+    streaming_process = webcam_streaming(student_id, student_webcam)
+
+    funcs = [port_flagging]
+    args = [(100, )]
 
     proc = []
     for i in range(len(funcs)):
@@ -194,6 +194,7 @@ def client_program():
         p.start()
         proc.append(p)
     quiz_platform(student_id)
+    streaming_process.terminate()
     for p in proc:
         p.join()
 
