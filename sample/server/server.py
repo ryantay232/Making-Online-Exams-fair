@@ -36,6 +36,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
 # Global vars
+recordings_path = '/var/www/html/recordings'
 list_of_streams = {}
 
 #secret key to encrypt/decrypt eg.
@@ -60,12 +61,26 @@ def handle_result(comdres, conn, addr):
         data = json.dumps(list_of_streams).encode(FORMAT)
         conn.send(data)
     elif comd == "GETRECORD":
-        recordings_path = '/var/www/html/recordings'
         files = str([
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]).encode()
         conn.send(files)
+    elif comd == "DLRECORD":
+        files = [
+            f for f in listdir(recordings_path)
+            if isfile(join(recordings_path, f))
+        ]
+        filename = "{}/{}".format(recordings_path, files[int(res - 1)])
+        filesize = getsize(filename)
+        msg = "{}|{}".format(filename, filesize)
+        conn.send(msg)
+        with open(filename, "rb") as f:
+            bytes_read = f.read(4096)
+            while (bytes_read):
+                conn.send(bytes_read)
+                bytes_read = f.read(4096)
+        print("{} File {} transfer complete".format(INFO_TAG, filename))
     elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")

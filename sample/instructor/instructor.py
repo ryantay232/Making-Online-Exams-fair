@@ -9,10 +9,7 @@ import threading
 import time
 from datetime import datetime
 
-import numpy as np
-import pandas as pd
-from Crypto import Random
-from Crypto.Cipher import AES
+import tqdm
 
 # Server info
 PORT = 5050
@@ -28,12 +25,14 @@ menu = """
 1. Upload quiz
 2. Check flagged students
 3. Print list of students' streams
-4. Download student's stream
-5. Exit
+4. Print list of recordings
+5. Download student's stream
+6. Exit
 """
 
 # Client info
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
+recordings_path = "instructor_files/streams"
 
 # Server info
 HOST = "35.185.186.41"  # to change to server ip address
@@ -55,7 +54,7 @@ def main():
     quiz_script = " "
     quiz_file = " "
     choice = 0
-    while choice != 5:
+    while choice != 6:
         print(menu)
         choicestr = input("Input: ")
         try:
@@ -63,7 +62,7 @@ def main():
         except ValueError:
             print(f"{ERROR_TAG}, invalid format")
             continue
-        if choice < 5:
+        if choice < 6:
             if choice == 1:
                 # replace with your own code
                 print("Uploading quiz, Choose default quiz")
@@ -96,9 +95,10 @@ def main():
                 print_streams(s)
             elif choice == 4:
                 # replace with your own code
+                get_list_of_recordings(s)
+            elif choice == 5:
                 print("Download student's stream")
-
-        elif choice == 5:
+        elif choice == 6:
             print("Exiting...")
             #send exit command to server
             Header = (f"!END|{MSG_LEN}").encode()
@@ -136,12 +136,49 @@ def get_list_of_recordings(s):
     msg = "GETRECORD".encode()
     s.send(msg)
     reply = s.recv(MSG_LEN).decode(FORMAT)
-    recordings_list = list(reply)
+    recordings_list = reply[1:-1].split(', ')
+    if len(recordings_list) == 0:
+        print("{} No recordings in server.".format(INFO_TAG))
+    else:
+        for i in range(len(recordings_list)):
+            print("{}. {}".format(i + 1, recordings_list[i][1:-1]))
 
 
 # Send file
 def receive_file(s):
-    path = "instructor_files/streams"
+    choice = None
+    while choice is None:
+        choicestr = input("Input: ")
+        try:
+            choice = int(choicestr)
+        except ValueError:
+            print(f"{ERROR_TAG}, invalid format")
+
+    to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
+    s.send(to_send)
+    s.recv(MSG_LEN)
+    msg = "DLRECORD|{}".format(choice).encode()
+    s.send(msg)
+    reply = s.recv(MSG_LEN).decode(FORMAT)
+    path, filesize = reply.split('|')
+    filename = os.path.basename(path.split("/")[-1])
+    filesize = int(filesize)
+    progress = tqdm.tqdm(range(filesize),
+                         "Receiving {}".format(filename),
+                         unit='B',
+                         unit_scale=True,
+                         unit_divisor=1024)
+    bytes_received = 0
+    recording_filepath = "{}/{}".format(recordings_path, filename)
+    with open(recording_filepath, "wb") as f:
+        for _ in progress:
+            if bytes_received >= filesize:
+                break
+            bytes_read = s.recv(4096)
+            f.write(bytes_read)
+            bytes_received += len(bytes_read)
+            progress.update(len(bytes_read))
+    print("{} {} downloaded.".format(INFO_TAG, filename))
 
 
 if __name__ == "__main__":

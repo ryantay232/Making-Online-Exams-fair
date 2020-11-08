@@ -18,9 +18,12 @@ def handle_command(addr, msg):
     res = None
 
     if comd == "GETSTREAM":
-        res = ComdResult("GETSTREAM")
+        res = ComdResult(comd)
     elif comd == "GETRECORD":
-        res = ComdResult("GETRECORD")
+        res = ComdResult(comd)
+    elif comd == "DLRECORD":
+        data = msg_list[1]
+        res = ComdResult(comd, data)
     elif comd == "PUSH":
         #submit quiz to server
         data = msg_list[1]
