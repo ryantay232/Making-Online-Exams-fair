@@ -12,8 +12,6 @@ import tqdm
 
 # Server info
 PORT = 5050
-SERVER = '35.198.237.249'  # socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
 choices = """choices (enter the number):
@@ -63,16 +61,16 @@ def send_file(s, path, filename, filesize):
     print("{} {} sent.".format(INFO_TAG, filename))
 
 
-def quiz_platform(student_id):
+def quiz_platform(server_ip, student_id):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
-
+    ADDR = (server_ip, PORT)
     s.connect(ADDR)
     print("{} Connected to server".format(INFO_TAG))
     # start stream
     header = (f"!STU|{MSG_LEN}").encode()
     s.send(header)
     message = s.recv(MSG_LEN).decode()
-    msg = webcam.start_stream(student_id, SERVER).encode()
+    msg = webcam.start_stream(student_id, server_ip).encode()
     s.send(msg)
     connected = True
     while connected:
@@ -185,13 +183,13 @@ def port_flagging():
     #portflagging.main()
 
 
-def webcam_streaming(student_id, student_webcam):
+def webcam_streaming(server_ip, student_id, student_webcam):
     print("{} Streaming webcam...".format(INFO_TAG))
-    child_process = webcam.stream_webcam(student_id, student_webcam, SERVER)
+    child_process = webcam.stream_webcam(student_id, student_webcam, server_ip)
     return child_process
 
 
-def client_program():
+def client_program(server_ip):
     # input student ID
     student_id = input("Input student ID -> ")
     # choose webcam
@@ -213,19 +211,19 @@ def client_program():
         if not isWorking:
             student_webcam = None
     # start processes
-    streaming_process = webcam_streaming(student_id, student_webcam)
+    streaming_process = webcam_streaming(server_ip, student_id, student_webcam)
     portflagging_process = port_flagging()
     # run quiz platform
-    quiz_platform(student_id)
+    quiz_platform(server_ip, student_id)
     # terminate processes
     streaming_process.terminate()
     portflagging_process.terminate()
 
 
-def main():
+def main(server_ip):
     print("{} Starting client...".format(INFO_TAG))
-    client_program()
+    client_program(server_ip)
 
 
 if __name__ == "__main__":
-    main()
+    main('35.198.237.249')
