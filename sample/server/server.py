@@ -115,26 +115,13 @@ def handle_result(comdres, conn, addr):
         fname_ans = os.path.join(d2, f"{student_id}_answer.txt")
         fname_logs = os.path.join(d2, f"{student_id}_logs.txt")
         fname_json = os.path.join(d2, f"{student_id}_json.txt")
-        receive_file(conn, fname_ans, comdres.res1)
         conn.send(b' ')
-        receive_file(conn, fname_logs, comdres.res2)
+        receive_file(conn, fname_ans, int(comdres.res1))
         conn.send(b' ')
-        receive_file(conn, fname_json, comdres.res3)
+        receive_file(conn, fname_logs, int(comdres.res2))
         conn.send(b' ')
-        '''
-        f = open(fname_ans, 'w')
-        f1 = open(fname_logs, 'w')
-        f2 = open(fname_json, 'w')
-
-        f.write(res1)
-        f1.write(res2)
-        f2.write(res3)
-
-        f.close()
-        f1.close()
-        f2.close()
-        '''
-        
+        receive_file(conn, fname_json, int(comdres.res3))
+        conn.send(b' ')
 
     elif comd == "PUSH_QUIZ":
         #send quiz to server

@@ -27,7 +27,7 @@ choices = """choices (enter the number):
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
-MSG_LEN = 2048000
+MSG_LEN = 4096
 
 
 def receive_file(s, path, filename, filesize):
@@ -127,12 +127,6 @@ def quiz_platform(student_id):
                 try:
                     fname_ans = os.path.join(d1, f"{answer_script}.txt")
                     fsize_ans = getsize(fname_ans)
-                    '''
-                    with open(fname_ans, 'rt') as file:
-                        for lines in file:
-                            answer_file = answer_file + lines
-                    file.close()
-                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, {answer_script} not found in current directory..."
@@ -142,12 +136,6 @@ def quiz_platform(student_id):
                 try:
                     fname_logs = os.path.join(d1, f"studentId.log")
                     fsize_logs = getsize(fname_logs)
-                    '''
-                    with open(fname_logs, 'rt') as file1:
-                        for lines1 in file1:
-                            log_file = log_file + lines1
-                    file1.close()
-                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, logs file not found in current directory..."
@@ -157,12 +145,6 @@ def quiz_platform(student_id):
                 try:
                     fname_json = os.path.join(d1, f"studentId_access.json")
                     fsize_json = getsize(fname_json)
-                    '''
-                    with open(fname_json, 'rt') as file2:
-                        json_list = json.load(file2)
-                        for lines2 in json_list['app_accessed']:
-                            json_file = json_file + (f"{lines2} ")
-                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, studentId_access.json file not found in current directory..."
