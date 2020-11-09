@@ -42,6 +42,7 @@ ERROR_TAG = '[ERROR]'
 
 MSG_LEN = 4096
 
+
 # Download students' submissions
 def download_submissions(s):
     to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
@@ -49,15 +50,16 @@ def download_submissions(s):
     s.recv(MSG_LEN)
     msg = "GETSUB".encode(FORMAT)
     s.send(msg)
-    reply = s.recv(MSG_LEN)
+    reply = s.recv(MSG_LEN).decode(FORMAT)
     no_of_files = int(reply)
     s.send(b' ')
     for _ in range(no_of_files):
-        reply = s.recv(MSG_LEN)
+        reply = s.recv(MSG_LEN).decode(FORMAT)
         filename, filesize = reply.split('|')
         path = "{}/{}".format(submissions_path, filename)
-        receive_file(s, path, filename, filesize)
+        receive_file(s, path, filename, int(filesize))
         s.send(b' ')
+    print("{} Submissions downloaded.".format(INFO_TAG))
 
 
 # Get list of student streams (will move to own file)
