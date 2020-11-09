@@ -29,6 +29,7 @@ menu = """
 # Client info
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
 recordings_path = "instructor_files/streams"
+submissions_path = "instructor_files/submissions"
 
 # Server info
 HOST = "35.185.186.41"
@@ -43,14 +44,28 @@ MSG_LEN = 4096
 
 # Download students' submissions
 def download_submissions(s):
-    None
+    to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
+    s.send(to_send)
+    s.recv(MSG_LEN)
+    msg = "GETSUB".encode(FORMAT)
+    s.send(msg)
+    reply = s.recv(MSG_LEN)
+    no_of_files = int(reply)
+    s.send(b' ')
+    for _ in range(no_of_files):
+        reply = s.recv(MSG_LEN)
+        filename, filesize = reply.split('|')
+        path = "{}/{}".format(submissions_path, filename)
+        receive_file(s, path, filename, filesize)
+        s.send(b' ')
+
 
 # Get list of student streams (will move to own file)
 def print_streams(s):
     to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
     s.send(to_send)
     s.recv(MSG_LEN)
-    msg = "GETSTREAM".encode()
+    msg = "GETSTREAM".encode(FORMAT)
     s.send(msg)
     reply = s.recv(MSG_LEN).decode(FORMAT)
     streams_dict = json.loads(reply)
@@ -177,8 +192,7 @@ def main():
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 print(f"{INFO_TAG} successfully uploaded quiz")
             elif choice == 2:
-                # replace with your own code
-                print("Check flagged students")
+                download_submissions(s)
             elif choice == 3:
                 print_streams(s)
             elif choice == 4:

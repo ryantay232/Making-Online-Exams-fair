@@ -36,6 +36,7 @@ server.bind(ADDR)
 
 # Global vars
 recordings_path = '/var/www/html/recordings'
+submissions_path = './server_files/student_answer_scripts'
 list_of_streams = {}
 
 #secret key to encrypt/decrypt eg.
@@ -67,19 +68,24 @@ def send_file(s, path, filesize):
 def handle_result(comdres, conn, addr):
     comd = comdres.comd
     if comd == "SSTREAM":
+        # student start streaming to server
         list_of_streams[comdres.res] = comdres.res1
     elif comd == "ESTREAM":
+        # student end streaming to server
         del list_of_streams[comdres.res]
     elif comd == "GETSTREAM":
+        # send list of streams to instructor
         data = json.dumps(list_of_streams).encode(FORMAT)
         conn.send(data)
     elif comd == "GETRECORD":
+        # send list of recordings to instructor
         files = str([
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]).encode()
         conn.send(files)
     elif comd == "DLRECORD":
+        # send stream to instructor
         files = [
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
@@ -90,7 +96,7 @@ def handle_result(comdres, conn, addr):
         conn.send(msg)
         send_file(conn, filename, filesize)
     elif comd == "GET_QUIZ":
-        #send quiz to students
+        # send quiz to students
         print("sending student the quiz")
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
@@ -102,7 +108,7 @@ def handle_result(comdres, conn, addr):
         conn.send(msg)
         send_file(conn, fname_quiz, filesize)
     elif comd == "PUSH_ANSWER":
-        #save answer script in receive folder
+        # save answer script in receive folder
         print("{} Saving students answer scripts.".format(INFO_TAG))
         student_id = comdres.res
         d = os.getcwd()
@@ -119,7 +125,7 @@ def handle_result(comdres, conn, addr):
         receive_file(conn, fname_json, int(comdres.res3))
         conn.send(b' ')
     elif comd == "PUSH_QUIZ":
-        #send quiz to server
+        # send quiz to server
         print("{} Saving quiz to server.".format(INFO_TAG))
         conn.send(b' ')
         d = os.getcwd()
@@ -129,9 +135,22 @@ def handle_result(comdres, conn, addr):
         filesize = student_id
         receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
-    elif comd == "GET_FLAG":
-        #get students' submissions
-        None
+    elif comd == "GETSUB":
+        # get students' submissions
+        files = [
+            f for f in listdir(submissions_path)
+            if isfile(join(submissions_path, f))
+        ]
+        msg = "{}".format(len(files)).encode(FORMAT)
+        conn.send(msg)
+        conn.recv()
+        for f in files:
+            filename = "{}/{}".format(submissions_path, f)
+            filesize = getsize(filename)
+            msg = "{}|{}".format(f, filesize).encode(FORMAT)
+            conn.send(msg)
+            send_file()
+            conn.recv()
     else:
         print("{} Error in command".format(ERROR_TAG))
 
