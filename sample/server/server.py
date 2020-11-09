@@ -143,14 +143,14 @@ def handle_result(comdres, conn, addr):
         ]
         msg = "{}".format(len(files)).encode(FORMAT)
         conn.send(msg)
-        conn.recv()
+        conn.recv(MSG_LEN)
         for f in files:
             filename = "{}/{}".format(submissions_path, f)
             filesize = getsize(filename)
             msg = "{}|{}".format(f, filesize).encode(FORMAT)
             conn.send(msg)
-            send_file()
-            conn.recv()
+            send_file(conn, filename, filesize)
+            conn.recv(MSG_LEN)
     else:
         print("{} Error in command".format(ERROR_TAG))
 
