@@ -33,7 +33,6 @@ def handle_command(addr, msg):
     res = None
 
     if comd == "SSTREAM":
-        #data = msg_list[1]
         res = get_streamlink(msg_list[1], msg_list[2])
     elif comd == "ESTREAM":
         data = msg_list[1]

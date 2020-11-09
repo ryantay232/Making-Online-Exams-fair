@@ -39,7 +39,7 @@ FORMAT = 'utf-8'
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
-MSG_LEN = 2048000
+MSG_LEN = 4096
 
 
 # Get list of student streams (will move to own file)
@@ -129,13 +129,6 @@ def send_file(s, path, filename, filesize):
                 break
             s.send(bytes_read)
             progress.update(len(bytes_read))
-    '''
-    with open(path, "rb") as f:
-        bytes_read = f.read(4096)
-        while bytes_read:
-            s.send(bytes_read)
-            bytes_read = f.read(4096)
-    '''
     print("{} {} sent.".format(INFO_TAG, filename))
 
 
@@ -145,7 +138,6 @@ def main():
     print("{} Connected to server".format(INFO_TAG))
 
     quiz_script = " "
-    quiz_file = " "
     choice = 0
     while choice != 6:
         print(menu)
@@ -165,9 +157,6 @@ def main():
                     d = os.getcwd()
                     d1 = os.path.join(d, "instructor_files")
                     filepath = os.path.join(d1, f"{quiz_script}.txt")
-                    with open(filepath, 'rt') as file:
-                        for lines in file:
-                            quiz_file = quiz_file + lines
                     print(f"{INFO_TAG} Successfully chosen {quiz_script}.txt")
                 except FileNotFoundError:
                     print(f"{ERROR_TAG} Enter a valid filename...")

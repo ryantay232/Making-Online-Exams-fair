@@ -71,9 +71,9 @@ def handle_result(comdres, conn, addr):
     res2 = comdres.res2
     res3 = comdres.res3
     if comd == "SSTREAM":
-        list_of_streams[res] = res1
+        list_of_streams[comdres.res] = comdres.res1
     elif comd == "ESTREAM":
-        del list_of_streams[res]
+        del list_of_streams[comdres.res]
     elif comd == "GETSTREAM":
         data = json.dumps(list_of_streams).encode(FORMAT)
         conn.send(data)
@@ -100,7 +100,12 @@ def handle_result(comdres, conn, addr):
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
+        filesize = getsize(fname_quiz)
+        msg = "{}|{}".format(fname_quiz.split('/')[-1], filesize)
+        conn.send(msg)
+        send_file(conn, fname_quiz, filesize)
 
+        '''
         quiz_file = " "
         try:
             with open(fname_quiz, 'rt') as file:
@@ -110,7 +115,7 @@ def handle_result(comdres, conn, addr):
             print(f"{ERROR_TAG}, quiz file not found in directory...")
         quiz_file = quiz_file.encode()
         conn.send(quiz_file)
-
+        '''
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
         print("saving students answer scripts")
@@ -138,7 +143,7 @@ def handle_result(comdres, conn, addr):
 
     elif comd == "PUSH_QUIZ":
         #send quiz to server
-        print("saving quiz to server")
+        print("{} Saving quiz to server.".format(INFO_TAG))
         conn.send(b' ')
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
@@ -174,8 +179,9 @@ def handle_client(conn, addr):
                               addr)
             elif header == INST_MSG:
                 # Instructor side
-                data = conn.recv(MSG_LEN).decode()  #wait to receive message
-                
+                data = conn.recv(
+                    int(msg_len)).decode()  #wait to receive message
+
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
             else:

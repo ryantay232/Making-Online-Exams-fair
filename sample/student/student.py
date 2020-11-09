@@ -6,8 +6,9 @@ import threading
 import time
 from multiprocessing import Process
 
-import sample.student.webcam.webcam as webcam
 import sample.student.port_flagging.script as portflagging
+import sample.student.webcam.webcam as webcam
+import tqdm
 
 # Server info
 PORT = 5050
@@ -26,6 +27,40 @@ INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
 MSG_LEN = 2048000
+
+
+def receive_file(s, path, filename, filesize):
+    progress = tqdm.tqdm(range(filesize),
+                         "Receiving {}".format(filename),
+                         unit='B',
+                         unit_scale=True,
+                         unit_divisor=1024)
+    bytes_received = 0
+    with open(path, "wb") as f:
+        for _ in progress:
+            if bytes_received >= filesize:
+                break
+            bytes_read = s.recv(4096)
+            f.write(bytes_read)
+            bytes_received += len(bytes_read)
+            progress.update(len(bytes_read))
+    print("{} {} received.".format(INFO_TAG, filename))
+
+
+def send_file(s, path, filename, filesize):
+    progress = tqdm.tqdm(range(filesize),
+                         "Sending {}".format(filename),
+                         unit='B',
+                         unit_scale=True,
+                         unit_divisor=1024)
+    with open(path, "rb") as f:
+        for _ in progress:
+            bytes_read = f.read(4096)
+            if not bytes_read:
+                break
+            s.send(bytes_read)
+            progress.update(len(bytes_read))
+    print("{} {} sent.".format(INFO_TAG, filename))
 
 
 def quiz_platform(student_id):
@@ -67,10 +102,16 @@ def quiz_platform(student_id):
                 Header = (f"!STU|{MSG_LEN}").encode()
                 s.send(Header)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
-                data = (f"GET| | | ").encode()
+                data = (f"GET").encode()
                 s.send(data)
+                msg = s.recv(MSG_LEN).decode(FORMAT)
+                filename, filesize = msg.split('|')
+                d = os.getcwd()
+                d1 = os.path.join(d, "student_files")
+                fname_quiz = os.path.join(d1, "quiz.txt")
+                receive_file(s, fname_quiz, filename, filesize)
+                '''
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
-                # print(message)  #this should be the test script
                 try:
                     d = os.getcwd()
                     d1 = os.path.join(d, "student_files")
@@ -81,7 +122,7 @@ def quiz_platform(student_id):
                 except:
                     print(f"{ERROR_TAG}, cannot write to file...")
                 print(f"{INFO_TAG} received quiz successfully")
-
+                '''
             elif read == 2:
                 # push your answer to server,
                 print("submitting answer script and logs file")
