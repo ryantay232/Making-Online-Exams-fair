@@ -27,7 +27,7 @@ def handle_command(addr, msg):
     elif comd == "PUSH":
         #submit quiz to server
         filesize = msg_list[1]
-        res = push_quiz(data, filesize)
+        res = push_quiz(filesize)
     else:
         print("{} Invalid command".format(ERROR_TAG))
 

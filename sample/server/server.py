@@ -145,16 +145,8 @@ def handle_result(comdres, conn, addr):
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
         filesize = res
-        receive_file(conn, fname_quiz, filesize)
+        receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
-        '''
-        f = open(fname_quiz, 'w')
-
-        f.write(res)
-
-        f.close()
-        conn.send(b' ')
-        '''
     else:
         print("{} Error in command".format(ERROR_TAG))
 

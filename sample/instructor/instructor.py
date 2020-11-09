@@ -178,19 +178,12 @@ def main():
                 Header = (f"!INS|{MSG_LEN}").encode()
                 s.send(Header)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
-                data = (f"PUSH").encode()
+                data = (f"PUSH|{filesize}").encode()
                 s.send(data)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 send_file(s, filepath, filename, filesize)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 print(f"{INFO_TAG} successfully uploaded quiz")
-                '''
-
-                data = (f"PUSH|{quiz_file}").encode()
-                s.send(data)
-                message = s.recv(MSG_LEN).decode()  #wait to receive message
-                print(f"{INFO_TAG} successfully uploaded quiz")
-                '''
             elif choice == 2:
                 # replace with your own code
                 print("Check flagged students")
