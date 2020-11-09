@@ -1,5 +1,5 @@
 import socket
-from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
+from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM
 
 import psutil
 

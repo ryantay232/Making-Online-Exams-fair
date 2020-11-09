@@ -1,6 +1,5 @@
 import socket
-
-from subprocess import run, Popen, PIPE
+from subprocess import PIPE, Popen, run
 
 
 # Get a list of webcam from command
@@ -43,12 +42,12 @@ def stream_webcam(student_id, webcam, HOST):
     # -preset ultrafast -tune zerolatency -f flv rtmp://<server>/live/<student_id>
     child_process = Popen([
         "ffmpeg", "-f", "dshow", "-s", "640x480", "-framerate", "30", "-i",
-        "video={}".format(webcam), "-vcodec", "libx264", "-preset", "ultrafast",
-        "-tune", "zerolatency", "-f", "flv", "rtmp://{}/live/{}".format(
-            HOST, student_id)
+        "video={}".format(webcam), "-vcodec", "libx264", "-preset",
+        "ultrafast", "-tune", "zerolatency", "-f", "flv",
+        "rtmp://{}/live/{}".format(HOST, student_id)
     ],
-                                    stdout=PIPE,
-                                    stderr=PIPE)
+                          stdout=PIPE,
+                          stderr=PIPE)
     return child_process
 
 

@@ -15,9 +15,9 @@ def end_stream(msg):
     return ComdResult("ESTREAM", msg)
 
 
-def push_script(student_id, answer_file, log_file, json_file):
-    return ComdResult("PUSH_ANSWER", student_id, answer_file, log_file,
-                      json_file)
+def push_script(student_id, fsize_ans, fsize_logs, fsize_json):
+    return ComdResult("PUSH_ANSWER", student_id, fsize_ans, fsize_logs,
+                      fsize_json)
 
 
 def get_quiz():
@@ -33,18 +33,17 @@ def handle_command(addr, msg):
     res = None
 
     if comd == "SSTREAM":
-        #data = msg_list[1]
         res = get_streamlink(msg_list[1], msg_list[2])
     elif comd == "ESTREAM":
         data = msg_list[1]
         res = end_stream(data)
     elif comd == "PUSH":
         #submit answer to server
-        data = msg_list[1]
-        data1 = msg_list[2]
-        data2 = msg_list[3]
-        data3 = msg_list[4]
-        res = push_script(data, data1, data2, data3)
+        student_id = msg_list[1]
+        fsize_ans = msg_list[2]
+        fsize_logs = msg_list[3]
+        fsize_json = msg_list[4]
+        res = push_script(student_id, fsize_ans, fsize_logs, fsize_json)
     elif comd == "GET":
         #get the script from server
         res = get_quiz()

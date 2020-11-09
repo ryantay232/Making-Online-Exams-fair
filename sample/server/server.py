@@ -36,6 +36,7 @@ server.bind(ADDR)
 
 # Global vars
 recordings_path = '/var/www/html/recordings'
+submissions_path = './server_files/student_answer_scripts'
 list_of_streams = {}
 
 #secret key to encrypt/decrypt eg.
@@ -44,98 +45,112 @@ SECRET_KEY = b'0123456789ABCDEF'
 MSG_LEN = 2048000
 
 
+def receive_file(s, path, filesize):
+    bytes_received = 0
+    with open(path, "wb") as f:
+        while bytes_received < filesize:
+            bytes_read = s.recv(4096)
+            f.write(bytes_read)
+            bytes_received += len(bytes_read)
+    print("{} {} received.".format(INFO_TAG, path))
+
+
+def send_file(s, path, filesize):
+    with open(path, "rb") as f:
+        bytes_read = f.read(4096)
+        while bytes_read:
+            s.send(bytes_read)
+            bytes_read = f.read(4096)
+    print("{} {} sent.".format(INFO_TAG, path))
+
+
 # Handle result that changes global vars from requests
 def handle_result(comdres, conn, addr):
     comd = comdres.comd
-    res = comdres.res
-    res1 = comdres.res1
-    res2 = comdres.res2
-    res3 = comdres.res3
     if comd == "SSTREAM":
-        list_of_streams[res] = res1
+        # student start streaming to server
+        list_of_streams[comdres.res] = comdres.res1
     elif comd == "ESTREAM":
-        del list_of_streams[res]
+        # student end streaming to server
+        del list_of_streams[comdres.res]
     elif comd == "GETSTREAM":
+        # send list of streams to instructor
         data = json.dumps(list_of_streams).encode(FORMAT)
         conn.send(data)
     elif comd == "GETRECORD":
+        # send list of recordings to instructor
         files = str([
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]).encode()
         conn.send(files)
     elif comd == "DLRECORD":
+        # send stream to instructor
         files = [
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]
-        filename = "{}/{}".format(recordings_path, files[int(res) - 1])
+        filename = "{}/{}".format(recordings_path, files[int(comdres.res) - 1])
         filesize = getsize(filename)
         msg = "{}|{}".format(filename, filesize).encode(FORMAT)
         conn.send(msg)
-        with open(filename, "rb") as f:
-            bytes_read = f.read(4096)
-            while (bytes_read):
-                conn.send(bytes_read)
-                bytes_read = f.read(4096)
-        print("{} File {} transfer complete".format(INFO_TAG, filename))
+        send_file(conn, filename, filesize)
     elif comd == "GET_QUIZ":
-        #send quiz to students
-        print("sending student the quiz")
+        # send quiz to students
+        print("{} Sending student the quiz.".format(INFO_TAG))
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-
-        quiz_file = " "
-        try:
-            with open(fname_quiz, 'rt') as file:
-                for lines in file:
-                    quiz_file = quiz_file + lines
-        except FileNotFoundError:
-            print(f"{ERROR_TAG}, quiz file not found in directory...")
-        quiz_file = quiz_file.encode()
-        conn.send(quiz_file)
-
+        filesize = getsize(fname_quiz)
+        msg = "{}|{}".format(fname_quiz.split('/')[-1],
+                             filesize).encode(FORMAT)
+        conn.send(msg)
+        send_file(conn, fname_quiz, filesize)
     elif comd == "PUSH_ANSWER":
-        #save answer script in receive folder
-        print("saving students answer scripts")
-        print("student_id: {}".format(res))
+        # save answer script in receive folder
+        print("{} Saving students answer scripts.".format(INFO_TAG))
+        student_id = comdres.res
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "student_answer_scripts")
-        fname_ans = os.path.join(d2, f"{res}_answer.txt")
-        fname_logs = os.path.join(d2, f"{res}_logs.txt")
-        fname_json = os.path.join(d2, f"{res}_json.txt")
-
-        f = open(fname_ans, 'w')
-        f1 = open(fname_logs, 'w')
-        f2 = open(fname_json, 'w')
-
-        f.write(res1)
-        f1.write(res2)
-        f2.write(res3)
-
-        f.close()
-        f1.close()
-        f2.close()
-
+        fname_ans = os.path.join(d2, f"{student_id}_answer.txt")
+        fname_logs = os.path.join(d2, f"{student_id}_logs.txt")
+        fname_json = os.path.join(d2, f"{student_id}_json.txt")
         conn.send(b' ')
-
+        receive_file(conn, fname_ans, int(comdres.res1))
+        conn.send(b' ')
+        receive_file(conn, fname_logs, int(comdres.res2))
+        conn.send(b' ')
+        receive_file(conn, fname_json, int(comdres.res3))
+        conn.send(b' ')
     elif comd == "PUSH_QUIZ":
-        #send quiz to server
-        print("saving quiz to server")
+        # send quiz to server
+        print("{} Saving quiz to server.".format(INFO_TAG))
+        conn.send(b' ')
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-
-        f = open(fname_quiz, 'w')
-
-        f.write(res)
-
-        f.close()
+        filesize = comdres.res
+        receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
+    elif comd == "GETSUB":
+        # get students' submissions
+        files = [
+            f for f in listdir(submissions_path)
+            if isfile(join(submissions_path, f))
+        ]
+        msg = "{}".format(len(files)).encode(FORMAT)
+        conn.send(msg)
+        conn.recv(MSG_LEN)
+        for f in files:
+            filename = "{}/{}".format(submissions_path, f)
+            filesize = getsize(filename)
+            msg = "{}|{}".format(f, filesize).encode(FORMAT)
+            conn.send(msg)
+            send_file(conn, filename, filesize)
+            conn.recv(MSG_LEN)
     else:
         print("{} Error in command".format(ERROR_TAG))
 
@@ -163,8 +178,9 @@ def handle_client(conn, addr):
                               addr)
             elif header == INST_MSG:
                 # Instructor side
-                data = conn.recv(MSG_LEN).decode()  #wait to receive message
-                #conn.send(b' ')
+                data = conn.recv(
+                    int(msg_len)).decode()  #wait to receive message
+
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
             else:

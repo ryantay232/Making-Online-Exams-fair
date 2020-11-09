@@ -3,6 +3,7 @@ import os
 import socket
 import sys
 import threading
+from os.path import getsize
 
 import tqdm
 
@@ -18,7 +19,7 @@ SECRET_KEY = b'0123456789ABCDEF'
 # Temporary menu, will change if needed
 menu = """
 1. Upload quiz
-2. Check flagged students
+2. Download students' submissions
 3. Print list of students' streams
 4. Print list of recordings
 5. Download student's stream
@@ -28,9 +29,10 @@ menu = """
 # Client info
 CLIENT_IP = socket.gethostbyname(socket.gethostname())
 recordings_path = "instructor_files/streams"
+submissions_path = "instructor_files/submissions"
 
 # Server info
-HOST = "35.185.186.41"  # to change to server ip address
+HOST = "35.185.186.41"
 PORT = 5050
 FORMAT = 'utf-8'
 
@@ -38,70 +40,26 @@ FORMAT = 'utf-8'
 INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
-MSG_LEN = 2048000
+MSG_LEN = 4096
 
 
-def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
-    s.connect(ADDR)
-    print("connected to server")
-
-    quiz_script = " "
-    quiz_file = " "
-    choice = 0
-    while choice != 6:
-        print(menu)
-        choicestr = input("Input: ")
-        try:
-            choice = int(choicestr)
-        except ValueError:
-            print(f"{ERROR_TAG}, invalid format")
-            continue
-        if choice < 6:
-            if choice == 1:
-                # replace with your own code
-                print("Uploading quiz, Choose default quiz")
-                quiz_script = input('key in the name of the quiz->')
-
-                try:
-                    d = os.getcwd()
-                    d1 = os.path.join(d, "instructor_files")
-                    fname_quiz = os.path.join(d1, f"{quiz_script}.txt")
-                    with open(fname_quiz, 'rt') as file:
-                        for lines in file:
-                            quiz_file = quiz_file + lines
-                    print(f"{INFO_TAG} successfully chosen {quiz_script}.txt")
-                except FileNotFoundError:
-                    print(f"{ERROR_TAG} enter a valid filename...")
-                    continue
-                Header = (f"!INS|{MSG_LEN}").encode()
-                s.send(Header)
-                message = s.recv(MSG_LEN).decode()  #wait to receive message
-                data = (f"PUSH|{quiz_file}").encode()
-                s.send(data)
-                message = s.recv(MSG_LEN).decode()  #wait to receive message
-                print(f"{INFO_TAG} successfully uploaded quiz")
-
-            elif choice == 2:
-                # replace with your own code
-                print("Check flagged students")
-            elif choice == 3:
-                print_streams(s)
-            elif choice == 4:
-                get_list_of_recordings(s)
-            elif choice == 5:
-                download_stream(s)
-        elif choice == 6:
-            print("Exiting...")
-            #send exit command to server
-            Header = (f"!END|{MSG_LEN}").encode()
-            s.send(Header)
-
-        else:
-            print("{} Invalid input".format(ERROR_TAG))
-
-    print("closing instructor program")
-    s.close()
+# Download students' submissions
+def download_submissions(s):
+    to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
+    s.send(to_send)
+    s.recv(MSG_LEN)
+    msg = "GETSUB".encode(FORMAT)
+    s.send(msg)
+    reply = s.recv(MSG_LEN).decode(FORMAT)
+    no_of_files = int(reply)
+    s.send(b' ')
+    for _ in range(no_of_files):
+        reply = s.recv(MSG_LEN).decode(FORMAT)
+        filename, filesize = reply.split('|')
+        path = "{}/{}".format(submissions_path, filename)
+        receive_file(s, path, filename, int(filesize))
+        s.send(b' ')
+    print("{} Submissions downloaded.".format(INFO_TAG))
 
 
 # Get list of student streams (will move to own file)
@@ -109,7 +67,7 @@ def print_streams(s):
     to_send = "!INS|{}".format(MSG_LEN).encode(FORMAT)
     s.send(to_send)
     s.recv(MSG_LEN)
-    msg = "GETSTREAM".encode()
+    msg = "GETSTREAM".encode(FORMAT)
     s.send(msg)
     reply = s.recv(MSG_LEN).decode(FORMAT)
     streams_dict = json.loads(reply)
@@ -137,7 +95,7 @@ def get_list_of_recordings(s):
             print("{}. {}".format(i + 1, recordings_list[i][1:-1]))
 
 
-# Send file
+# Download selected stream
 def download_stream(s):
     choice = None
     while choice is None:
@@ -156,14 +114,18 @@ def download_stream(s):
     path, filesize = reply.split('|')
     filename = os.path.basename(path.split("/")[-1])
     filesize = int(filesize)
+    dest_filepath = "./{}/{}".format(recordings_path, filename)
+    receive_file(s, dest_filepath, filename, filesize)
+
+
+def receive_file(s, path, filename, filesize):
     progress = tqdm.tqdm(range(filesize),
                          "Receiving {}".format(filename),
                          unit='B',
                          unit_scale=True,
                          unit_divisor=1024)
     bytes_received = 0
-    recording_filepath = "./{}/{}".format(recordings_path, filename)
-    with open(recording_filepath, "wb") as f:
+    with open(path, "wb") as f:
         for _ in progress:
             if bytes_received >= filesize:
                 break
@@ -171,7 +133,85 @@ def download_stream(s):
             f.write(bytes_read)
             bytes_received += len(bytes_read)
             progress.update(len(bytes_read))
-    print("{} {} downloaded.".format(INFO_TAG, filename))
+    print("{} {} received.".format(INFO_TAG, filename))
+
+
+def send_file(s, path, filename, filesize):
+    progress = tqdm.tqdm(range(filesize),
+                         "Sending {}".format(filename),
+                         unit='B',
+                         unit_scale=True,
+                         unit_divisor=1024)
+    with open(path, "rb") as f:
+        for _ in progress:
+            bytes_read = f.read(4096)
+            if not bytes_read:
+                break
+            s.send(bytes_read)
+            progress.update(len(bytes_read))
+    print("{} {} sent.".format(INFO_TAG, filename))
+
+
+def main():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
+    s.connect(ADDR)
+    print("{} Connected to server".format(INFO_TAG))
+
+    quiz_script = " "
+    choice = 0
+    while choice != 6:
+        print(menu)
+        choicestr = input("Input: ")
+        try:
+            choice = int(choicestr)
+        except ValueError:
+            print(f"{ERROR_TAG}, invalid format")
+            continue
+        if choice < 6:
+            if choice == 1:
+                # replace with your own code
+                print("Uploading quiz, Choose default quiz")
+                quiz_script = input('Key in the name of the quiz->')
+                filepath = None
+                try:
+                    d = os.getcwd()
+                    d1 = os.path.join(d, "instructor_files")
+                    filepath = os.path.join(d1, f"{quiz_script}.txt")
+                    print(f"{INFO_TAG} Successfully chosen {quiz_script}.txt")
+                except FileNotFoundError:
+                    print(f"{ERROR_TAG} Enter a valid filename...")
+                    continue
+
+                filename = "{}.txt".format(quiz_script)
+                filesize = getsize(filepath)
+                Header = (f"!INS|{MSG_LEN}").encode()
+                s.send(Header)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                data = (f"PUSH|{filesize}").encode()
+                s.send(data)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                send_file(s, filepath, filename, filesize)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                print(f"{INFO_TAG} successfully uploaded quiz")
+            elif choice == 2:
+                download_submissions(s)
+            elif choice == 3:
+                print_streams(s)
+            elif choice == 4:
+                get_list_of_recordings(s)
+            elif choice == 5:
+                download_stream(s)
+        elif choice == 6:
+            print("{} Exiting...".format(INFO_TAG))
+            #send exit command to server
+            Header = (f"!END|{MSG_LEN}").encode()
+            s.send(Header)
+
+        else:
+            print("{} Invalid input".format(ERROR_TAG))
+
+    print("{} Closing instructor program".format(INFO_TAG))
+    s.close()
 
 
 if __name__ == "__main__":
