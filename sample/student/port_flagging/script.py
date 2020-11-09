@@ -2,6 +2,7 @@ import json
 import os.path
 import shutil
 from contextlib import redirect_stdout
+from time import sleep
 
 import sample.student.port_flagging.portflaging as portflaging
 
@@ -36,7 +37,7 @@ def append(File1):
     os.remove(diffFileName)
 
 
-def main():
+def run():
     with open(tempFileName, 'w') as f:
         with redirect_stdout(f):
             portflaging.main()
@@ -71,6 +72,12 @@ def main():
     with open(accessAppFilePath, 'w') as access:
         json.dump(jsonObjectAccess, access)
 
+
+def main():
+    while True:
+        run()
+        sleep(60)
+        
 
 if __name__ == '__main__':
     main()

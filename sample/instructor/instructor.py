@@ -19,7 +19,7 @@ SECRET_KEY = b'0123456789ABCDEF'
 # Temporary menu, will change if needed
 menu = """
 1. Upload quiz
-2. Check flagged students
+2. Download students' submissions
 3. Print list of students' streams
 4. Print list of recordings
 5. Download student's stream
@@ -41,6 +41,9 @@ ERROR_TAG = '[ERROR]'
 
 MSG_LEN = 4096
 
+# Download students' submissions
+def download_submissions(s):
+    None
 
 # Get list of student streams (will move to own file)
 def print_streams(s):

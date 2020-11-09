@@ -66,10 +66,6 @@ def send_file(s, path, filesize):
 # Handle result that changes global vars from requests
 def handle_result(comdres, conn, addr):
     comd = comdres.comd
-    student_id = comdres.res
-    res1 = comdres.res1
-    res2 = comdres.res2
-    res3 = comdres.res3
     if comd == "SSTREAM":
         list_of_streams[comdres.res] = comdres.res1
     elif comd == "ESTREAM":
@@ -88,7 +84,7 @@ def handle_result(comdres, conn, addr):
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]
-        filename = "{}/{}".format(recordings_path, files[int(student_id) - 1])
+        filename = "{}/{}".format(recordings_path, files[int(comdres.res) - 1])
         filesize = getsize(filename)
         msg = "{}|{}".format(filename, filesize).encode(FORMAT)
         conn.send(msg)
@@ -122,7 +118,6 @@ def handle_result(comdres, conn, addr):
         conn.send(b' ')
         receive_file(conn, fname_json, int(comdres.res3))
         conn.send(b' ')
-
     elif comd == "PUSH_QUIZ":
         #send quiz to server
         print("{} Saving quiz to server.".format(INFO_TAG))
@@ -134,6 +129,9 @@ def handle_result(comdres, conn, addr):
         filesize = student_id
         receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
+    elif comd == "GET_FLAG":
+        #get students' submissions
+        None
     else:
         print("{} Error in command".format(ERROR_TAG))
 

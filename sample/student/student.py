@@ -4,10 +4,9 @@ import socket
 import sys
 import threading
 import time
-from multiprocessing import Process
 from os.path import getsize
+from subprocess import PIPE, Popen
 
-import sample.student.port_flagging.script as portflagging
 import sample.student.webcam.webcam as webcam
 import tqdm
 
@@ -82,7 +81,7 @@ def quiz_platform(student_id):
         try:
             read = int(readstr)
         except ValueError:
-            print(f"{ERROR_TAG}, invalid format")
+            print(f"{ERROR_TAG} Invalid format.")
             continue
         if read == 3:
             # end stream
@@ -167,22 +166,23 @@ def quiz_platform(student_id):
                 print(
                     f"{INFO_TAG} successfully submitted answer and logs to server."
                 )
-                
-                
+
             else:
-                print("please enter a valid number...")
+                print("{} Please enter a valid number...".format(ERROR_TAG))
 
         time.sleep(0.01)
 
-    print("closing client program")
+    print("{} Closing client program".format(INFO_TAG))
     s.close()
 
 
-def port_flagging(n):
-    # replace with your own code
-    for i in range(n):
-        #print("func2 {}".format(i))
-        None
+def port_flagging():
+    print("{} Checking opened ports...".format(INFO_TAG))
+    return Popen(["python", "-m", "sample.student.port_flagging.script"],
+                 stdout=PIPE,
+                 stderr=PIPE)
+
+    #portflagging.main()
 
 
 def webcam_streaming(student_id, student_webcam):
@@ -192,7 +192,9 @@ def webcam_streaming(student_id, student_webcam):
 
 
 def client_program():
+    # input student ID
     student_id = input("Input student ID -> ")
+    # choose webcam
     webcam_list = webcam.get_webcam_list()
     student_webcam = None
     while student_webcam is None:
@@ -210,25 +212,18 @@ def client_program():
         isWorking = webcam.test_webcam(student_webcam)
         if not isWorking:
             student_webcam = None
-
+    # start processes
     streaming_process = webcam_streaming(student_id, student_webcam)
-
-    funcs = [port_flagging]
-    args = [(100, )]
-
-    proc = []
-    for i in range(len(funcs)):
-        p = Process(target=funcs[i], args=args[i])
-        p.start()
-        proc.append(p)
+    portflagging_process = port_flagging()
+    # run quiz platform
     quiz_platform(student_id)
+    # terminate processes
     streaming_process.terminate()
-    for p in proc:
-        p.join()
+    portflagging_process.terminate()
 
 
 def main():
-    print("starting client thread...")
+    print("{} Starting client...".format(INFO_TAG))
     client_program()
 
 
