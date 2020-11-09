@@ -97,7 +97,7 @@ def handle_result(comdres, conn, addr):
         send_file(conn, filename, filesize)
     elif comd == "GET_QUIZ":
         # send quiz to students
-        print("sending student the quiz")
+        print("{} Sending student the quiz.".format(INFO_TAG))
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")

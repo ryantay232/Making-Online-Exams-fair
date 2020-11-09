@@ -98,7 +98,7 @@ def quiz_platform(student_id):
         elif read == 1 or read == 2:
             if read == 1:
                 #get the test script from server
-                print("getting the quiz from server")
+                print("{} Getting the quiz from server.".format(INFO_TAG))
                 Header = (f"!STU|{MSG_LEN}").encode()
                 s.send(Header)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
@@ -113,7 +113,7 @@ def quiz_platform(student_id):
                 print(f"{INFO_TAG} received quiz successfully")
             elif read == 2:
                 # push your answer to server,
-                print("submitting answer script and logs file")
+                print("{} Submitting answer script and logs file".format(INFO_TAG))
                 answer_script = input(
                     'key in the name of your answer script->')
                 answer_file = " "

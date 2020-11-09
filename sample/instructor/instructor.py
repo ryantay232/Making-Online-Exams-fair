@@ -202,7 +202,7 @@ def main():
             elif choice == 5:
                 download_stream(s)
         elif choice == 6:
-            print("Exiting...")
+            print("{} Exiting...".format(INFO_TAG))
             #send exit command to server
             Header = (f"!END|{MSG_LEN}").encode()
             s.send(Header)
@@ -210,7 +210,7 @@ def main():
         else:
             print("{} Invalid input".format(ERROR_TAG))
 
-    print("closing instructor program")
+    print("{} Closing instructor program".format(INFO_TAG))
     s.close()
 
 
