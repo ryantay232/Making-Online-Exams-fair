@@ -5,8 +5,8 @@ INFO_TAG = '[INFO]'
 ERROR_TAG = '[ERROR]'
 
 
-def push_quiz(quiz_file):
-    return ComdResult("PUSH_QUIZ", quiz_file)
+def push_quiz(filesize):
+    return ComdResult("PUSH_QUIZ", filesize)
 
 
 # Handle commands from clients
@@ -26,8 +26,8 @@ def handle_command(addr, msg):
         res = ComdResult(comd, data)
     elif comd == "PUSH":
         #submit quiz to server
-        data = msg_list[1]
-        res = push_quiz(data)
+        filesize = msg_list[1]
+        res = push_quiz(data, filesize)
     else:
         print("{} Invalid command".format(ERROR_TAG))
 

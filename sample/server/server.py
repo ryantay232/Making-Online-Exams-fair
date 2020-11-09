@@ -139,12 +139,14 @@ def handle_result(comdres, conn, addr):
     elif comd == "PUSH_QUIZ":
         #send quiz to server
         print("saving quiz to server")
+        conn.send(b' ')
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-        filesize = getsize(fname_quiz)
+        filesize = res
         receive_file(conn, fname_quiz, filesize)
+        conn.send(b' ')
         '''
         f = open(fname_quiz, 'w')
 
@@ -181,7 +183,7 @@ def handle_client(conn, addr):
             elif header == INST_MSG:
                 # Instructor side
                 data = conn.recv(MSG_LEN).decode()  #wait to receive message
-                #conn.send(b' ')
+                
                 handle_result(instructor_comd.handle_command(addr, data), conn,
                               addr)
             else:
