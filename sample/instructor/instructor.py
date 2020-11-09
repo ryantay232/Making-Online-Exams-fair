@@ -9,8 +9,8 @@ import tqdm
 
 # Server info
 PORT = 5050
-SERVER = '35.198.237.249'  #socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
+#SERVER = '35.198.237.249'  #socket.gethostbyname(socket.gethostname())
+#ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
 #secret key to encrypt/decrypt eg.
@@ -152,8 +152,9 @@ def send_file(s, path, filename, filesize):
     print("{} {} sent.".format(INFO_TAG, filename))
 
 
-def main():
+def main(server_ip):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
+    ADDR = (server_ip, PORT)
     s.connect(ADDR)
     print("{} Connected to server".format(INFO_TAG))
 
@@ -215,4 +216,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main('35.198.237.249')
