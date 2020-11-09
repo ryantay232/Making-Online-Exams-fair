@@ -37,10 +37,7 @@ recordings_path = '/var/www/html/recordings'
 submissions_path = './server_files/student_answer_scripts'
 list_of_streams = {}
 
-#secret key to encrypt/decrypt eg.
-SECRET_KEY = b'0123456789ABCDEF'
-
-MSG_LEN = 2048000
+MSG_LEN = 4096
 
 
 def receive_file(s, path, filesize):
