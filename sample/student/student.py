@@ -7,6 +7,7 @@ import time
 from multiprocessing import Process
 
 import sample.student.webcam.webcam as webcam
+import sample.student.port_flagging.script as portflagging
 
 # Server info
 PORT = 5050
@@ -31,7 +32,7 @@ def quiz_platform(student_id):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP socket
 
     s.connect(ADDR)
-    print("connected to server")
+    print("{} Connected to server".format(INFO_TAG))
     # start stream
     header = (f"!STU|{MSG_LEN}").encode()
     s.send(header)
@@ -118,14 +119,14 @@ def quiz_platform(student_id):
                     continue
 
                 try:
-                    fname_json = os.path.join(d1, f"restricted_app.json")
+                    fname_json = os.path.join(d1, f"studentId_access.json")
                     with open(fname_json, 'rt') as file2:
                         json_list = json.load(file2)
-                        for lines2 in json_list['restricted_app']:
+                        for lines2 in json_list['app_accessed']:
                             json_file = json_file + (f"{lines2} ")
                 except FileNotFoundError:
                     print(
-                        f"{ERROR_TAG}, restricted_app json file not found in current directory..."
+                        f"{ERROR_TAG}, studentId_access.json file not found in current directory..."
                     )
                     continue
 
@@ -138,7 +139,7 @@ def quiz_platform(student_id):
                 s.send(data)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 print(
-                    f"{INFO_TAG} successfully submitted answer and logs to server"
+                    f"{INFO_TAG} successfully submitted answer and logs to server."
                 )
 
             else:

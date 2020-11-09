@@ -44,6 +44,25 @@ SECRET_KEY = b'0123456789ABCDEF'
 MSG_LEN = 2048000
 
 
+def receive_file(s, path, filesize):
+    bytes_received = 0
+    with open(path, "wb") as f:
+        while bytes_received < filesize:
+            bytes_read = s.recv(4096)
+            f.write(bytes_read)
+            bytes_received += len(bytes_read)
+    print("{} {} received.".format(INFO_TAG, path))
+
+
+def send_file(s, path, filesize):
+    with open(path, "rb") as f:
+        bytes_read = f.read(4096)
+        while bytes_read:
+            s.send(bytes_read)
+            bytes_read = f.read(4096)
+    print("{} {} sent.".format(INFO_TAG, path))
+
+
 # Handle result that changes global vars from requests
 def handle_result(comdres, conn, addr):
     comd = comdres.comd
@@ -73,12 +92,7 @@ def handle_result(comdres, conn, addr):
         filesize = getsize(filename)
         msg = "{}|{}".format(filename, filesize).encode(FORMAT)
         conn.send(msg)
-        with open(filename, "rb") as f:
-            bytes_read = f.read(4096)
-            while (bytes_read):
-                conn.send(bytes_read)
-                bytes_read = f.read(4096)
-        print("{} File {} transfer complete".format(INFO_TAG, filename))
+        send_file(conn, filename, filesize)
     elif comd == "GET_QUIZ":
         #send quiz to students
         print("sending student the quiz")
@@ -129,13 +143,16 @@ def handle_result(comdres, conn, addr):
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-
+        filesize = getsize(fname_quiz)
+        receive_file(conn, fname_quiz, filesize)
+        '''
         f = open(fname_quiz, 'w')
 
         f.write(res)
 
         f.close()
         conn.send(b' ')
+        '''
     else:
         print("{} Error in command".format(ERROR_TAG))
 
