@@ -9,14 +9,8 @@ import tqdm
 
 # Server info
 PORT = 5050
-#SERVER = '35.198.237.249'  #socket.gethostbyname(socket.gethostname())
-#ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
-#secret key to encrypt/decrypt eg.
-SECRET_KEY = b'0123456789ABCDEF'
-
-# Temporary menu, will change if needed
 menu = """
 1. Upload quiz
 2. Download students' submissions
