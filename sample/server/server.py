@@ -132,7 +132,7 @@ def handle_result(comdres, conn, addr):
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-        filesize = student_id
+        filesize = comdres.res
         receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
     elif comd == "GETSUB":
