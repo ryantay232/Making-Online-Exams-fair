@@ -24,6 +24,8 @@ def handle_command(addr, msg):
     elif comd == "DLRECORD":
         data = msg_list[1]
         res = ComdResult(comd, data)
+    elif comd == "GETSUB":
+        res = ComdResult(comd)
     elif comd == "PUSH":
         #submit quiz to server
         filesize = msg_list[1]
