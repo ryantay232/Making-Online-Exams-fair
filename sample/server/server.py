@@ -16,8 +16,6 @@ import sample.server.student_comd.student_comd as student_comd
 HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
-PUBLIC_IP = run("curl https://ipecho.net/plain".split(),
-                capture_output=True).stdout.decode()
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 
