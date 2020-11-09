@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 from multiprocessing import Process
+from os.path import getsize
 
 import sample.student.port_flagging.script as portflagging
 import sample.student.webcam.webcam as webcam
@@ -109,20 +110,8 @@ def quiz_platform(student_id):
                 d = os.getcwd()
                 d1 = os.path.join(d, "student_files")
                 fname_quiz = os.path.join(d1, "quiz.txt")
-                receive_file(s, fname_quiz, filename, filesize)
-                '''
-                message = s.recv(MSG_LEN).decode()  #wait to receive message
-                try:
-                    d = os.getcwd()
-                    d1 = os.path.join(d, "student_files")
-                    fname_quiz = os.path.join(d1, "quiz.txt")
-                    file = open(fname_quiz, 'w')
-                    file.write(message)
-                    file.close()
-                except:
-                    print(f"{ERROR_TAG}, cannot write to file...")
+                receive_file(s, fname_quiz, filename, int(filesize))
                 print(f"{INFO_TAG} received quiz successfully")
-                '''
             elif read == 2:
                 # push your answer to server,
                 print("submitting answer script and logs file")
@@ -137,10 +126,13 @@ def quiz_platform(student_id):
 
                 try:
                     fname_ans = os.path.join(d1, f"{answer_script}.txt")
+                    fsize_ans = getsize(fname_ans)
+                    '''
                     with open(fname_ans, 'rt') as file:
                         for lines in file:
                             answer_file = answer_file + lines
                     file.close()
+                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, {answer_script} not found in current directory..."
@@ -149,10 +141,13 @@ def quiz_platform(student_id):
 
                 try:
                     fname_logs = os.path.join(d1, f"studentId.log")
+                    fsize_logs = getsize(fname_logs)
+                    '''
                     with open(fname_logs, 'rt') as file1:
                         for lines1 in file1:
                             log_file = log_file + lines1
                     file1.close()
+                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, logs file not found in current directory..."
@@ -161,28 +156,37 @@ def quiz_platform(student_id):
 
                 try:
                     fname_json = os.path.join(d1, f"studentId_access.json")
+                    fsize_json = getsize(fname_json)
+                    '''
                     with open(fname_json, 'rt') as file2:
                         json_list = json.load(file2)
                         for lines2 in json_list['app_accessed']:
                             json_file = json_file + (f"{lines2} ")
+                    '''
                 except FileNotFoundError:
                     print(
                         f"{ERROR_TAG}, studentId_access.json file not found in current directory..."
                     )
                     continue
-
                 Header = (f"!STU|{MSG_LEN}").encode()
                 s.send(Header)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 data = (
-                    f"PUSH|{student_id}|{answer_file}|{log_file}|{json_file}"
+                    f"PUSH|{student_id}|{fsize_ans}|{fsize_logs}|{fsize_json}"
                 ).encode()
                 s.send(data)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                send_file(s, fname_ans, fname_ans.split('/')[-1], fsize_ans)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                send_file(s, fname_logs, fname_logs.split('/')[-1], fsize_logs)
+                message = s.recv(MSG_LEN).decode()  #wait to receive message
+                send_file(s, fname_json, fname_json.split('/')[-1], fsize_json)
                 message = s.recv(MSG_LEN).decode()  #wait to receive message
                 print(
                     f"{INFO_TAG} successfully submitted answer and logs to server."
                 )
-
+                
+                
             else:
                 print("please enter a valid number...")
 

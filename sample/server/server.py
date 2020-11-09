@@ -66,7 +66,7 @@ def send_file(s, path, filesize):
 # Handle result that changes global vars from requests
 def handle_result(comdres, conn, addr):
     comd = comdres.comd
-    res = comdres.res
+    student_id = comdres.res
     res1 = comdres.res1
     res2 = comdres.res2
     res3 = comdres.res3
@@ -88,7 +88,7 @@ def handle_result(comdres, conn, addr):
             f for f in listdir(recordings_path)
             if isfile(join(recordings_path, f))
         ]
-        filename = "{}/{}".format(recordings_path, files[int(res) - 1])
+        filename = "{}/{}".format(recordings_path, files[int(student_id) - 1])
         filesize = getsize(filename)
         msg = "{}|{}".format(filename, filesize).encode(FORMAT)
         conn.send(msg)
@@ -101,32 +101,27 @@ def handle_result(comdres, conn, addr):
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
         filesize = getsize(fname_quiz)
-        msg = "{}|{}".format(fname_quiz.split('/')[-1], filesize)
+        msg = "{}|{}".format(fname_quiz.split('/')[-1],
+                             filesize).encode(FORMAT)
         conn.send(msg)
         send_file(conn, fname_quiz, filesize)
-
-        '''
-        quiz_file = " "
-        try:
-            with open(fname_quiz, 'rt') as file:
-                for lines in file:
-                    quiz_file = quiz_file + lines
-        except FileNotFoundError:
-            print(f"{ERROR_TAG}, quiz file not found in directory...")
-        quiz_file = quiz_file.encode()
-        conn.send(quiz_file)
-        '''
     elif comd == "PUSH_ANSWER":
         #save answer script in receive folder
-        print("saving students answer scripts")
-        print("student_id: {}".format(res))
+        print("{} Saving students answer scripts.".format(INFO_TAG))
+        student_id = comdres.res
         d = os.getcwd()
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "student_answer_scripts")
-        fname_ans = os.path.join(d2, f"{res}_answer.txt")
-        fname_logs = os.path.join(d2, f"{res}_logs.txt")
-        fname_json = os.path.join(d2, f"{res}_json.txt")
-
+        fname_ans = os.path.join(d2, f"{student_id}_answer.txt")
+        fname_logs = os.path.join(d2, f"{student_id}_logs.txt")
+        fname_json = os.path.join(d2, f"{student_id}_json.txt")
+        receive_file(conn, fname_ans, comdres.res1)
+        conn.send(b' ')
+        receive_file(conn, fname_logs, comdres.res2)
+        conn.send(b' ')
+        receive_file(conn, fname_json, comdres.res3)
+        conn.send(b' ')
+        '''
         f = open(fname_ans, 'w')
         f1 = open(fname_logs, 'w')
         f2 = open(fname_json, 'w')
@@ -138,8 +133,8 @@ def handle_result(comdres, conn, addr):
         f.close()
         f1.close()
         f2.close()
-
-        conn.send(b' ')
+        '''
+        
 
     elif comd == "PUSH_QUIZ":
         #send quiz to server
@@ -149,7 +144,7 @@ def handle_result(comdres, conn, addr):
         d1 = os.path.join(d, "server_files")
         d2 = os.path.join(d1, "quiz_file")
         fname_quiz = os.path.join(d2, f"quiz.txt")
-        filesize = res
+        filesize = student_id
         receive_file(conn, fname_quiz, int(filesize))
         conn.send(b' ')
     else:
